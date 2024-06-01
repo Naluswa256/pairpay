@@ -1,11 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:sizzle_starter/src/feature/authentication/presentation/screens/sign_up/sign_up_screen.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/screens/onboarding/onboarding_screen.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/screens/sign_up/sign_up_screen.dart';
 import 'package:sizzle_starter/src/feature/settings/widget/settings_scope.dart';
 import 'package:get/get.dart';
+import 'package:sizzle_starter/src/splash_screen.dart';
 
-import '../../authentication/presentation/screens/init_screen.dart';
+import '../../authentication/view/screens/init_screen.dart';
 
 /// {@template material_context}
 /// [MaterialContext] is an entry point to the material context.
@@ -28,7 +30,8 @@ class MaterialContext extends StatelessWidget {
         builder: (context, orientation, screenType) => GetMaterialApp(
           debugShowCheckedModeBanner: false,
           theme: themeData,
-          home: const InitScreen(),
+          themeMode: ThemeMode.light,
+          home: const OnboardingScreen(),
           builder: (context, child) => MediaQuery.withClampedTextScaling(
             key: _globalKey,
             minScaleFactor: 1.0,

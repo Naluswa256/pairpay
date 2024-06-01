@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sizzle_starter/src/core/constant/theme/theme_constants.dart';
-import 'package:sizzle_starter/src/feature/authentication/presentation/common_widgets/custom_surfix_icon.dart';
-import 'package:sizzle_starter/src/feature/authentication/presentation/common_widgets/form_error.dart';
-import 'package:sizzle_starter/src/feature/authentication/presentation/common_widgets/no_account_text.dart';
-import 'package:sizzle_starter/src/feature/authentication/presentation/screens/init_screen.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/common_widgets/custom_surfix_icon.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/common_widgets/form_error.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/common_widgets/no_account_text.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/screens/init_screen.dart';
 import 'package:sizzle_starter/src/feature/home/widget/home_screen.dart';
 
 class ForgotPassForm extends StatefulWidget {

@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sizzle_starter/src/core/constant/theme/theme_constants.dart';
-import 'package:sizzle_starter/src/feature/authentication/presentation/screens/otp/components/otp_form.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/screens/otp/components/otp_form.dart';
 
 class OtpScreen extends StatelessWidget {
   const OtpScreen({super.key});

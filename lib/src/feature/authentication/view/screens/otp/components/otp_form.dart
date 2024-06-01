@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sizzle_starter/src/core/constant/theme/theme_constants.dart';
 import 'package:get/get.dart';
-import 'package:sizzle_starter/src/feature/authentication/presentation/screens/forgot_password/forgot_password_screen.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/screens/forgot_password/forgot_password_screen.dart';
 
 class OtpForm extends StatefulWidget {
   const OtpForm({

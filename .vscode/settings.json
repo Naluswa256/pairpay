@@ -3,4 +3,6 @@
     "drift"
   ],
   "dart.lineLength": 80,
+  "IDX.aI.enableInlineCompletion": true,
+  "IDX.aI.enableCodebaseIndexing": true,
 }

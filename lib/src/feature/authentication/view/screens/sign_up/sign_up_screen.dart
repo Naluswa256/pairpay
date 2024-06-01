@@ -1,17 +1,13 @@
-
-
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:sizzle_starter/src/feature/authentication/presentation/common_widgets/no_account_text.dart';
-import 'package:sizzle_starter/src/feature/authentication/presentation/common_widgets/social_card.dart';
-
-import 'package:sizzle_starter/src/feature/authentication/presentation/screens/sign_in/components/sign_form.dart';
-
-class SignInScreen extends StatelessWidget {
-
-  const SignInScreen({super.key});
+import 'package:sizzle_starter/src/core/constant/theme/theme_constants.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/common_widgets/social_card.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/screens/sign_up/components/sign_up_form.dart';
+import 'package:get/get.dart';
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
         body: SafeArea(
@@ -23,20 +19,13 @@ class SignInScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     SizedBox(height: 16),
-                    Text(
-                      "Welcome Back",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    const Text("Register Account", style: headingStyle),
                     const Text(
-                      "Sign in with your email and password  \nor continue with social media",
+                      "Complete your details or continue \nwith social media",
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 16),
-                    const SignForm(),
+                     SizedBox(height: 16),
+                    const SignUpForm(),
                     SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -55,8 +44,12 @@ class SignInScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
-                    const NoAccountText(),
+                    SizedBox(height: 16),
+                    Text(
+                      'By continuing your confirm that you agree \nwith our Term and Condition',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    )
                   ],
                 ),
               ),

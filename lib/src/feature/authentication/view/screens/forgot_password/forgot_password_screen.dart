@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:sizzle_starter/src/feature/authentication/presentation/screens/forgot_password/components/forgot_pass_form.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/screens/forgot_password/components/forgot_pass_form.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   static String routeName = "/forgot_password";

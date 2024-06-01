@@ -13,9 +13,9 @@ final class AppTheme with Diagnosticable {
   AppTheme({required this.mode})
       :  lightTheme = FlexThemeData.light(
     colors: const FlexSchemeColor(
-      primary: Color(0xff080808),
+      primary: Color(0xffC4C4C4),
       primaryContainer: Color(0xffd0e4ff),
-      secondary: Color(0xffac3306),
+      secondary: Color(0xff000000),
       secondaryContainer: Color(0xffffdbcf),
       tertiary: Color(0xff006875),
       tertiaryContainer: Color(0xffe5e2e1),

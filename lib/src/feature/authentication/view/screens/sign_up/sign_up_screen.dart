@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sizzle_starter/src/core/constant/theme/theme_constants.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/common_widgets/already_account_text.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/common_widgets/social_card.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/sign_up/components/sign_up_form.dart';
 import 'package:get/get.dart';
@@ -14,42 +15,42 @@ class SignUpScreen extends StatelessWidget {
           child: SizedBox(
             width: double.infinity,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.zero,
               child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 16),
-                    const Text("Register Account", style: headingStyle),
-                    const Text(
-                      "Complete your details or continue \nwith social media",
-                      textAlign: TextAlign.center,
+                     Container(
+                      height: MediaQuery.sizeOf(context).height*0.40,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor
+                      ),
+
+                      child:Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical:24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.arrow_back_ios_new, size:18.sp),
+                              ],
+                            ),
+                           const  Expanded(child:Center(child:Text('illustration'),))                         
+                          ],
+                        ),
+                      ),
                     ),
-                     SizedBox(height: 16),
+                    const SizedBox(height: 25,),
+                    Padding(
+                      padding: const EdgeInsets.only(left:12),
+                      child: Text('Sign Up', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),),
+                    ),                   
                     const SignUpForm(),
-                    SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SocalCard(
-                          icon: "assets/icons/google-icon.svg",
-                          press: () {},
-                        ),
-                        SocalCard(
-                          icon: "assets/icons/facebook-2.svg",
-                          press: () {},
-                        ),
-                        SocalCard(
-                          icon: "assets/icons/twitter.svg",
-                          press: () {},
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'By continuing your confirm that you agree \nwith our Term and Condition',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    )
+                    AlreadyAccountText()
+                  
+                   
+                    
                   ],
                 ),
               ),

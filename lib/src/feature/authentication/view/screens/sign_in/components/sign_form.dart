@@ -76,7 +76,10 @@ class _SignFormState extends State<SignForm> {
                   hintStyle: TextStyle(fontSize: 16, color: Color.fromARGB(255, 71, 70, 70)),
                    enabledBorder: UnderlineInputBorder(      
                         borderSide: BorderSide(color: Colors.black),   
-                        ),  
+                        ),
+                    focusedBorder: UnderlineInputBorder(      
+                        borderSide: BorderSide(color: Colors.black),   
+                        ),     
                 ),
               ),
               SizedBox(height: 20),

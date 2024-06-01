@@ -32,7 +32,7 @@ class MaterialContext extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: themeData,
           themeMode: ThemeMode.light,
-          home: const SignInScreen(),
+          home: const SignUpScreen(),
           builder: (context, child) => MediaQuery.withClampedTextScaling(
             key: _globalKey,
             minScaleFactor: 1.0,

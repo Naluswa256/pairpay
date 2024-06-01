@@ -13,7 +13,7 @@ final class AppTheme with Diagnosticable {
   AppTheme({required this.mode})
       :  lightTheme = FlexThemeData.light(
     colors: const FlexSchemeColor(
-      primary: Color(0xffC4C4C4),
+      primary: Color(0xffD9D9D9),
       primaryContainer: Color(0xffd0e4ff),
       secondary: Color(0xff000000),
       secondaryContainer: Color(0xffffdbcf),
@@ -35,12 +35,12 @@ final class AppTheme with Diagnosticable {
       elevatedButtonSchemeColor: SchemeColor.onPrimary,
       elevatedButtonSecondarySchemeColor: SchemeColor.primary,
       segmentedButtonSchemeColor: SchemeColor.primary,
-      inputDecoratorSchemeColor: SchemeColor.primary,
-      inputDecoratorBackgroundAlpha: 21,
-      inputDecoratorRadius: 8.0,
-      inputDecoratorUnfocusedHasBorder: false,
-      inputDecoratorFocusedHasBorder: false,
-      inputDecoratorPrefixIconSchemeColor: SchemeColor.primary,
+      //inputDecoratorSchemeColor: SchemeColor.primary,
+      //inputDecoratorBackgroundAlpha: 21,
+      //inputDecoratorRadius: 8.0,
+      //inputDecoratorUnfocusedHasBorder: false,
+      //inputDecoratorFocusedHasBorder: false,
+      //inputDecoratorPrefixIconSchemeColor: SchemeColor.primary,
       fabUseShape: true,
       fabAlwaysCircular: true,
       fabSchemeColor: SchemeColor.primary,

@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/common_widgets/no_account_text.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/common_widgets/social_card.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/screens/onboarding/components/primary_button.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/sign_in/components/sign_form.dart';
 
 class SignInScreen extends StatelessWidget {
@@ -18,45 +19,44 @@ class SignInScreen extends StatelessWidget {
           child: SizedBox(
             width: double.infinity,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.zero,
               child: SingleChildScrollView(
                 child: Column(
-                  children: [
-                    SizedBox(height: 16),
-                    Text(
-                      "Welcome Back",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.bold,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [                   
+                    Container(
+                      height: MediaQuery.sizeOf(context).height*0.40,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor
+                      ),
+
+                      child:Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical:24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.arrow_back_ios_new, size:18.sp),
+                              ],
+                            ),
+                           const  Expanded(child:Center(child:Text('illustration'),))
+                           
+                            
+                          ],
+                        ),
                       ),
                     ),
-                    const Text(
-                      "Sign in with your email and password  \nor continue with social media",
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 16),
-                    const SignForm(),
-                    SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SocalCard(
-                          icon: "assets/icons/google-icon.svg",
-                          press: () {},
-                        ),
-                        SocalCard(
-                          icon: "assets/icons/facebook-2.svg",
-                          press: () {},
-                        ),
-                        SocalCard(
-                          icon: "assets/icons/twitter.svg",
-                          press: () {},
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    const NoAccountText(),
+                    const SizedBox(height: 25,),
+                    Padding(
+                      padding: const EdgeInsets.only(left:12),
+                      child: Text('Login', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),),
+                    ), 
+                    SignForm(),
+                    const SizedBox(height: 25,), 
+                    CustomButton(isFilled: false, buttonTitle: 'Continue with Google', onPressed: (){
+
+                    })
                   ],
                 ),
               ),
@@ -65,3 +65,5 @@ class SignInScreen extends StatelessWidget {
         ),
       );
 }
+
+

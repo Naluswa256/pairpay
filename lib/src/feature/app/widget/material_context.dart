@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/forgot_password/forgot_password_screen.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/onboarding/onboarding_screen.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/screens/otp/otp_screen.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/sign_in/sign_in_screen.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/sign_up/sign_up_screen.dart';
 import 'package:sizzle_starter/src/feature/settings/widget/settings_scope.dart';
@@ -33,7 +34,7 @@ class MaterialContext extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: themeData,
           themeMode: ThemeMode.light,
-          home: const ForgotPasswordScreen(),
+          home: const OtpScreen(),
           builder: (context, child) => MediaQuery.withClampedTextScaling(
             key: _globalKey,
             minScaleFactor: 1.0,

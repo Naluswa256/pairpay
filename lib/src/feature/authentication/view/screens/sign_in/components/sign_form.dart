@@ -136,7 +136,10 @@ class _SignFormState extends State<SignForm> {
                     KeyboardUtil.hideKeyboard(context);
                     Get.to(const OtpScreen());
                   }
-              })
+              }), 
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:3563884214.
+              const SizedBox(height: 5),
+              CustomButton(isFilled: false, buttonTitle: 'Continue with Google', onPressed: (){})
               
             ],
           ),

@@ -53,10 +53,7 @@ class SignInScreen extends StatelessWidget {
                       child: Text('Login', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),),
                     ), 
                     SignForm(),
-                    const SizedBox(height: 25,), 
-                    CustomButton(isFilled: false, buttonTitle: 'Continue with Google', onPressed: (){
-
-                    })
+                    
                   ],
                 ),
               ),

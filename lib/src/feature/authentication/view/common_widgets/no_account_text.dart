@@ -19,7 +19,7 @@ class NoAccountText extends StatelessWidget {
           onTap: () {},
           child:Text(
             "Sign Up",
-            style: TextStyle(fontSize: 16.sp, color: kPrimaryColor),
+            style: TextStyle(fontSize: 16.sp, color:Colors.black, fontWeight: FontWeight.bold),
           ),
         ),
       ],

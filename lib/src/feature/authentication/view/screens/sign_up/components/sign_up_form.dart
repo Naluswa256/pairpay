@@ -69,6 +69,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 decoration: const InputDecoration(
                   labelText: "Email",
                   hintText: "Example@gmail.com",
+                  filled: false,
                   enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.black),
                   ),
@@ -104,6 +105,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 decoration: const InputDecoration(
                   labelText: "Password",
                   hintText: "password",
+                  filled: false,
                   enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.black),
                   ),
@@ -139,6 +141,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 decoration: const InputDecoration(
                   labelText: "Confirm Password",
                   hintText: "Re-enter your password",
+                  filled: false,
                   enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.black),
                   ),

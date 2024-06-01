@@ -14,27 +14,42 @@ class ForgotPasswordScreen extends StatelessWidget {
           child: SizedBox(
             width: double.infinity,
             child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    SizedBox(height: 16),
-                    Text(
-                      "Forgot Password",
-                      style: TextStyle(
-                        fontSize: 24.sp,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   Container(
+                    height: MediaQuery.sizeOf(context).height*0.60,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor
+                    ),
+              
+                    child:Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical:24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.arrow_back_ios_new, size:18.sp),
+                            ],
+                          ),
+                         const  Expanded(child:Center(child:Text('illustration'),))                         
+                        ],
                       ),
                     ),
-                    const Text(
-                      "Please enter your email and we will send \nyou a link to return to your account",
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 32),
-                    const ForgotPassForm(),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 25,),
+                  Padding(
+                    padding: const EdgeInsets.only(left:12),
+                    child: Text('Forgot\nyour Password?', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),),
+                  ),   
+                  const SizedBox(height: 10,),
+                  Padding(
+                    padding: const EdgeInsets.only(left:12,right: 3),
+                    child: Text('Please enter the email address you’d like your password reset information sent to'),
+                  ),
+                  const ForgotPassForm(),
+                ],
               ),
             ),
           ),

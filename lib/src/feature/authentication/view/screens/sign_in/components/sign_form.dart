@@ -109,7 +109,10 @@ class _SignFormState extends State<SignForm> {
                   enabledBorder: UnderlineInputBorder(      
                         borderSide: BorderSide(color: Colors.black),   
                         ), 
-                ),
+                  focusedBorder: UnderlineInputBorder(      
+                        borderSide: BorderSide(color: Colors.black),   
+                        ),       
+                )
               ),
               SizedBox(height: 20),
               Padding(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'components/profile_menu.dart';
+
 import 'components/profile_pic.dart';
 
 class ProfileScreen extends StatelessWidget {

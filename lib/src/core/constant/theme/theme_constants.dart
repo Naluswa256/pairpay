@@ -41,6 +41,7 @@ const otpInputDecoration = InputDecoration(
   border: outlineInputBorder,
   focusedBorder: outlineInputBorder,
   enabledBorder: outlineInputBorder,
+  filled: false
 );
 
 const OutlineInputBorder outlineInputBorder = OutlineInputBorder(

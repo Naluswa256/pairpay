@@ -2,15 +2,18 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/forgot_password/forgot_password_screen.dart';
+import 'package:sizzle_starter/src/feature/authentication/view/screens/forgot_password/reset_password.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/onboarding/onboarding_screen.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/otp/otp_screen.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/sign_in/sign_in_screen.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/sign_up/sign_up_screen.dart';
+import 'package:sizzle_starter/src/feature/home/widget/Dashboard/view/home_screen.dart';
 import 'package:sizzle_starter/src/feature/settings/widget/settings_scope.dart';
 import 'package:get/get.dart';
 import 'package:sizzle_starter/src/splash_screen.dart';
 
 import '../../authentication/view/screens/init_screen.dart';
+import '../../home/widget/Dashboard/view/home_screen.widgets/all_category_screen.dart';
 
 /// {@template material_context}
 /// [MaterialContext] is an entry point to the material context.
@@ -34,7 +37,7 @@ class MaterialContext extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: themeData,
           themeMode: ThemeMode.light,
-          home: const OtpScreen(),
+          home: const AllCategoryScreen(),
           builder: (context, child) => MediaQuery.withClampedTextScaling(
             key: _globalKey,
             minScaleFactor: 1.0,

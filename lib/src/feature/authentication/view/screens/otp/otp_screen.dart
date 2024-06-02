@@ -20,33 +20,18 @@ class OtpScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                      HeaderWidget(headerTitle: 'Enter OTP'),
-                     const SizedBox(height: 30,),
-                     Text('Enter 4 digit verification code sent to your registered mobile number.'),
+                     const SizedBox(height:20,),
+                     Padding(
+                       padding: const EdgeInsets.only(left:12),
+                       child: Text('Enter 4 digit verification code sent to your registered mobile number.'),
+                     ),
                     const OtpForm(),
-                    
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     // OTP code resend
-                    //   },
-                    //   child: const Text(
-                    //     "Resend OTP Code",
-                    //     style: TextStyle(decoration: TextDecoration.underline),
-                    //   ),
-                    // )
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     const Text("This code will expired in "),
-                    //     TweenAnimationBuilder(
-                    //       tween: Tween(begin: 30.0, end: 0.0),
-                    //       duration: const Duration(seconds: 30),
-                    //       builder: (_, dynamic value, child) => Text(
-                    //         "00:${value.toInt()}",
-                    //         style: const TextStyle(color: kPrimaryColor),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
+                    const SizedBox(height:10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: ExpiringCode(onResendCode: (){}),
+                    )
+                   
                   ],
                 ),
               ),
@@ -54,4 +39,65 @@ class OtpScreen extends StatelessWidget {
           ),
         ),
       );
+}
+
+
+class ExpiringCode extends StatefulWidget {
+  final Function onResendCode;
+
+  const ExpiringCode({Key? key, required this.onResendCode}) : super(key: key);
+
+  @override
+  State<ExpiringCode> createState() => _ExpiringCodeState();
+}
+
+class _ExpiringCodeState extends State<ExpiringCode>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 30),
+    );
+    _animation = Tween<double>(begin: 30.0, end: 0.0).animate(_controller);
+    _controller.forward(from: 0.0); // Start the animation immediately
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        const Text("This code will expire in "),
+        AnimatedBuilder(
+          animation: _controller,
+          builder: (_, child) => Text(
+            "00:${_animation.value.toInt()}",
+            style: const TextStyle(color: kPrimaryColor),
+          ),
+        ),
+       // Spacer(),
+        Expanded(child:SizedBox()),
+        _controller.isCompleted
+            ? GestureDetector(
+          onTap: () => widget.onResendCode(),
+          child: Text(
+            "Resend Code",
+            style: const TextStyle(color:Colors.black, decoration: TextDecoration.underline),
+          ),
+        )
+            : const SizedBox(), // Maintain spacing during animation
+      ],
+    );
+  }
 }

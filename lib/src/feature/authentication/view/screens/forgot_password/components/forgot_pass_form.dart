@@ -9,7 +9,7 @@ import 'package:sizzle_starter/src/feature/authentication/view/common_widgets/fo
 import 'package:sizzle_starter/src/feature/authentication/view/common_widgets/no_account_text.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/init_screen.dart';
 import 'package:sizzle_starter/src/feature/authentication/view/screens/onboarding/components/primary_button.dart';
-import 'package:sizzle_starter/src/feature/home/widget/home_screen.dart';
+import 'package:sizzle_starter/src/feature/home/widget/Dashboard/view/home_screen.dart';
 
 class ForgotPassForm extends StatefulWidget {
   const ForgotPassForm({super.key});

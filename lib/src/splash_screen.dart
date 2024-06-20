@@ -1,41 +1,51 @@
-// ignore_for_file: public_member_api_docs, must_be_immutable
+// ignore_for_file: public_member_api_docs, must_be_immutable, inference_failure_on_function_invocation
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:sizzle_starter/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:sizzle_starter/src/feature/onboarding/bloc/authenticaton_bloc.dart';
 import 'package:sizzle_starter/src/feature/onboarding/bloc/events/authentication_event.dart';
 import 'package:sizzle_starter/src/feature/onboarding/bloc/states/authentication_bloc.dart';
+import 'package:sizzle_starter/src/feature/onboarding/screens/choose_login.dart';
+import 'package:sizzle_starter/src/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
-  SplashScreen({required this.authenticationBloc, Key? key}) : super(key: key);
-   AuthenticationBloc authenticationBloc;
+  SplashScreen({ Key? key}) : super(key: key);
+   
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
- 
+ late AuthenticationBloc authenticationBloc;
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    authenticationBloc = DependenciesScope.of(context).authenticationBloc;
+      return  Scaffold(
         body: BlocListener<AuthenticationBloc, AuthenticationState>(
-          bloc: widget.authenticationBloc,
+          bloc: authenticationBloc,
           listener: (BuildContext context, AuthenticationState state) {
             if (state is AppAutheticated) {
+              Get.to(const HomeScreen());
             }
             if (state is AuthenticationStart) {
+              Get.to(const ChooseLogin());
             }
             if (state is UserLogoutState) {
+              Get.to(const ChooseLogin());
             }
           },
           child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-              bloc: widget.authenticationBloc,
+              bloc: authenticationBloc,
               builder: (BuildContext context, AuthenticationState state) => Center(child: Image.asset('assets/images/logo-removebg-preview.png'))),
         ));
+  } 
 
   @override
   void initState() {
-    widget.authenticationBloc.add(AppLoadedup());
+    authenticationBloc.add(AppLoadedup());
     super.initState();
   }
 }

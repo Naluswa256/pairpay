@@ -1,4 +1,4 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
+
 import 'package:flutter/material.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:sizzle_starter/src/feature/app/widget/material_context.dart';

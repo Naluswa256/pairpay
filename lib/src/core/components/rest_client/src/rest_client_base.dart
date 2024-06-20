@@ -12,24 +12,8 @@ abstract base class RestClientBase implements RestClient {
   /// {@macro rest_client}
   RestClientBase({required String baseUrl}) : baseUri = Uri.parse(baseUrl);
 
-  /// The base url for the client
+  /// The base URL for the client
   final Uri baseUri;
-
-  static final _jsonUTF8 = json.fuse(utf8);
-
-  /// Encodes [body] to JSON and then to UTF8
-  @protected
-  @visibleForTesting
-  List<int> encodeBody(Map<String, Object?> body) {
-    try {
-      return _jsonUTF8.encode(body);
-    } on Object catch (e, stackTrace) {
-      Error.throwWithStackTrace(
-        ClientException(message: 'Error occured during encoding $e'),
-        stackTrace,
-      );
-    }
-  }
 
   /// Builds [Uri] from [path], [queryParams] and [baseUri]
   @protected
@@ -45,7 +29,7 @@ abstract base class RestClientBase implements RestClient {
     );
   }
 
-  /// Decodes [body] from JSON \ UTF8
+  /// Decodes [body] from JSON
   @protected
   @visibleForTesting
   FutureOr<Map<String, Object?>?> decodeResponse(
@@ -65,28 +49,19 @@ abstract base class RestClientBase implements RestClient {
         }
       } else if (body is Map<String, Object?>) {
         result = body;
-      } else if (body is List<int>) {
-        if (body.length > 1000) {
-          result = await Isolate.run(
-            () => _jsonUTF8.decode(body)! as Map<String, Object?>,
-          );
-        } else {
-          result = _jsonUTF8.decode(body)! as Map<String, Object?>;
-        }
       } else {
         throw WrongResponseTypeException(
           message: 'Unexpected response body type: ${body.runtimeType}',
           statusCode: statusCode,
         );
       }
-
-      if (result case {'error': final Map<String, Object?> error}) {
-        throw CustomBackendException(
-          message: 'Backend returned custom error',
-          error: error,
-          statusCode: statusCode,
-        );
-      }
+      if (result.containsKey('code') && result['code'] is int) {
+      final errorMessage = result['message'] as String?;
+      throw CustomBackendException(
+        message: '$errorMessage',
+        statusCode: statusCode, error: const {},
+      );
+    }
 
       if (result case {'data': final Map<String, Object?> data}) {
         return data;
@@ -98,7 +73,7 @@ abstract base class RestClientBase implements RestClient {
     } on Object catch (e, stackTrace) {
       Error.throwWithStackTrace(
         ClientException(
-          message: 'Error occured during decoding',
+          message: 'Error occurred during decoding',
           statusCode: statusCode,
           cause: e,
         ),

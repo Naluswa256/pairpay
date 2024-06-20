@@ -1,20 +1,15 @@
 
 import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:sizzle_starter/src/feature/authentication/view/screens/forgot_password/forgot_password_screen.dart';
-import 'package:sizzle_starter/src/feature/authentication/view/screens/forgot_password/reset_password.dart';
-import 'package:sizzle_starter/src/feature/authentication/view/screens/onboarding/onboarding_screen.dart';
-import 'package:sizzle_starter/src/feature/authentication/view/screens/otp/otp_screen.dart';
-import 'package:sizzle_starter/src/feature/authentication/view/screens/sign_in/sign_in_screen.dart';
-import 'package:sizzle_starter/src/feature/authentication/view/screens/sign_up/sign_up_screen.dart';
-import 'package:sizzle_starter/src/feature/home/widget/Dashboard/view/home_screen.dart';
+import 'package:sizzle_starter/src/feature/onboarding/screens/choose_login.dart';
+import 'package:sizzle_starter/src/feature/onboarding/screens/forgot_password.dart';
+import 'package:sizzle_starter/src/feature/onboarding/screens/lawyer_login_screen.dart';
+import 'package:sizzle_starter/src/feature/onboarding/screens/reset_password_screen.dart';
+import 'package:sizzle_starter/src/feature/onboarding/screens/user_login_screen.dart';
+import 'package:sizzle_starter/src/feature/onboarding/screens/user_signup_screen.dart';
+import 'package:sizzle_starter/src/feature/onboarding/screens/verify_email_screen.dart';
 import 'package:sizzle_starter/src/feature/settings/widget/settings_scope.dart';
 import 'package:get/get.dart';
 import 'package:sizzle_starter/src/splash_screen.dart';
-
-import '../../authentication/view/screens/init_screen.dart';
-import '../../home/widget/Dashboard/view/home_screen.widgets/all_category_screen.dart';
-
 /// {@template material_context}
 /// [MaterialContext] is an entry point to the material context.
 ///
@@ -32,20 +27,18 @@ class MaterialContext extends StatelessWidget {
   Widget build(BuildContext context) {
      final theme = SettingsScope.themeOf(context).theme;
      final themeData = theme.computeTheme();
-    return ResponsiveSizer(
-        builder: (context, orientation, screenType) => GetMaterialApp(
+    return  GetMaterialApp(
           debugShowCheckedModeBanner: false,
           theme: themeData,
           themeMode: ThemeMode.light,
-          home: const AllCategoryScreen(),
-          builder: (context, child) => MediaQuery.withClampedTextScaling(
-            key: _globalKey,
-            minScaleFactor: 1.0,
-            maxScaleFactor: 2.0,
-            child: child!,
-          ),
-        ),
-      );
+          home: ResetPasswordScreen(),
+          // builder: (context, child) => MediaQuery.withClampedTextScaling(
+          //   key: _globalKey,
+          //   minScaleFactor: 1.0,
+          //   maxScaleFactor: 2.0,
+          //   child: child!,
+          // ),
+        );
   }
 }
 

@@ -1,8 +1,17 @@
+// ignore_for_file: unused_local_variable
+
+import 'package:dio/dio.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sizzle_starter/src/core/components/rest_client/src/rest_client_dio.dart';
 import 'package:sizzle_starter/src/core/constant/config.dart';
+import 'package:sizzle_starter/src/core/services/localStorage/shared_pref.service.dart';
 import 'package:sizzle_starter/src/core/utils/logger.dart';
 import 'package:sizzle_starter/src/feature/app/logic/tracking_manager.dart';
 import 'package:sizzle_starter/src/feature/initialization/model/dependencies.dart';
+import 'package:sizzle_starter/src/feature/onboarding/bloc/authenticaton_bloc.dart';
+import 'package:sizzle_starter/src/feature/onboarding/bloc/bloc_controller.dart';
+import 'package:sizzle_starter/src/feature/onboarding/repository/auth_repository.dart';
 import 'package:sizzle_starter/src/feature/settings/bloc/settings_bloc.dart';
 import 'package:sizzle_starter/src/feature/settings/data/locale_datasource.dart';
 import 'package:sizzle_starter/src/feature/settings/data/locale_repository.dart';
@@ -24,11 +33,12 @@ final class InitializationProcessor {
     final sharedPreferences = await SharedPreferences.getInstance();
     final errorTrackingManager = await _initErrorTrackingManager();
     final settingsBloc = await _initSettingsBloc(sharedPreferences);
-
+     final authBlocController = await _initAuthenticationBlocController(sharedPreferences);
     return Dependencies(
       sharedPreferences: sharedPreferences,
       settingsBloc: settingsBloc,
       errorTrackingManager: errorTrackingManager,
+      authenticationBloc: authBlocController.authenticationBloc,
     );
   }
 
@@ -46,6 +56,27 @@ final class InitializationProcessor {
     return errorTrackingManager;
   }
 
+ Future<AuthenticationBlocController> _initAuthenticationBlocController(SharedPreferences prefs) async {
+    final dio = Dio();
+    dio.interceptors.add(PrettyDioLogger());
+// customization
+   dio.interceptors.add(PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,),);
+    final restClient = RestClientDio(
+      baseUrl: 'https://your.api.base.url',
+      dio: dio,
+    );
+
+    final tokenStorage = TokenStorageService(sharedPreferences: prefs);
+
+    return AuthenticationBlocController(
+      restClient: restClient,
+      sharedPreferences: prefs,
+      tokenStorage: tokenStorage,
+    );
+  }
+
   Future<SettingsBloc> _initSettingsBloc(SharedPreferences prefs) async {
     final localeRepository = LocaleRepositoryImpl(
       localeDataSource: LocaleDataSourceLocal(sharedPreferences: prefs),
@@ -57,7 +88,6 @@ final class InitializationProcessor {
         codec: const ThemeModeCodec(),
       ),
     );
-
 
     final theme = await themeRepository.getTheme();
 

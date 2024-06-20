@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizzle_starter/src/feature/app/logic/tracking_manager.dart';
+import 'package:sizzle_starter/src/feature/onboarding/bloc/authenticaton_bloc.dart';
 import 'package:sizzle_starter/src/feature/settings/bloc/settings_bloc.dart';
 
 /// {@template dependencies}
@@ -11,6 +12,7 @@ base class Dependencies {
     required this.sharedPreferences,
     required this.settingsBloc,
     required this.errorTrackingManager,
+    required this.authenticationBloc,
   });
 
   /// [SharedPreferences] instance, used to store Key-Value pairs.
@@ -21,6 +23,8 @@ base class Dependencies {
 
   /// [ErrorTrackingManager] instance, used to report errors.
   final ErrorTrackingManager errorTrackingManager;
+  /// [AuthenticationBloc] instance, used to handle authentication.
+  final AuthenticationBloc authenticationBloc;
 }
 
 /// {@template initialization_result}
@@ -38,6 +42,7 @@ final class InitializationResult {
 
   /// The number of milliseconds spent
   final int msSpent;
+
 
   @override
   String toString() => '$InitializationResult('

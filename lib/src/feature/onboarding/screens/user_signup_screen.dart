@@ -1,8 +1,10 @@
-// ignore_for_file: unnecessary_raw_strings
+// ignore_for_file: unnecessary_raw_strings, inference_failure_on_function_invocation
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:sizzle_starter/src/core/constant/sizeConfig/size_config.dart';
 import 'package:sizzle_starter/src/core/utils/validators/form_validations.dart';
@@ -12,6 +14,8 @@ import 'package:sizzle_starter/src/feature/initialization/widget/dependencies_sc
 import 'package:sizzle_starter/src/feature/onboarding/bloc/authenticaton_bloc.dart';
 import 'package:sizzle_starter/src/feature/onboarding/bloc/events/authentication_event.dart';
 import 'package:sizzle_starter/src/feature/onboarding/bloc/states/authentication_bloc.dart';
+import 'package:sizzle_starter/src/feature/onboarding/screens/user_login_screen.dart';
+import 'package:sizzle_starter/src/feature/onboarding/screens/verify_email_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -25,11 +29,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
+  final _fullNamesController = TextEditingController();
   @override
   void dispose() {
     super.dispose();
     _passwordController.dispose();
     _emailController.dispose();
+    _fullNamesController.dispose();
   }
 
   void _showError(String error) async {
@@ -40,7 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         timeInSecForIosWeb: 3,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0);
+        fontSize: 16.0,);
   }
 
   @override
@@ -55,9 +61,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         if (state is AuthenticationFailure) {
           _showError(state.message);
         }
-       if(state is AppAutheticated){
-         _showError('user signed in');
-       }
+        if (state is AppAutheticated) {
+          _showError('user account succesfully created');
+          context.go('/verifyEmai');
+        }
       },
       child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
           bloc: authenticationBloc,
@@ -106,8 +113,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       children: <Widget>[
                                         Container(
                                           margin: EdgeInsets.only(
-                                              top: MySize.size16!),
+                                              top: MySize.size16!,),
                                           child: TextFormField(
+                                            controller: _fullNamesController,
                                             style: AppThemeCustom.getTextStyle(
                                               themeData.textTheme.bodyLarge,
                                               color:
@@ -132,8 +140,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         ),
                                         Container(
                                           margin: EdgeInsets.only(
-                                              top: MySize.size16!),
+                                              top: MySize.size16!,),
                                           child: TextFormField(
+                                            controller: _emailController,
                                             style: AppThemeCustom.getTextStyle(
                                               themeData.textTheme.bodyLarge,
                                               color:
@@ -152,14 +161,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               prefixIcon:
                                                   Icon(MdiIcons.phoneOutline),
                                             ),
-                                            keyboardType: TextInputType.number,
                                             validator: validateEmail,
                                           ),
                                         ),
                                         Container(
                                           margin: EdgeInsets.only(
-                                              top: MySize.size16!),
+                                              top: MySize.size16!,),
                                           child: TextFormField(
+                                            controller: _passwordController,
                                             style: AppThemeCustom.getTextStyle(
                                               themeData.textTheme.bodyLarge,
                                               color:
@@ -197,7 +206,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         ),
                                         Container(
                                           margin: EdgeInsets.only(
-                                              top: MySize.size24!),
+                                              top: MySize.size24!,),
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.all(
                                               Radius.circular(MySize.size24!),
@@ -237,12 +246,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               if (_key.currentState!
                                                   .validate()) {
                                                 authenticationBloc.add(
-                                                    UserLogin(
+                                                    UserSignUp(
                                                         email: _emailController
                                                             .text,
                                                         password:
                                                             _passwordController
-                                                                .text));
+                                                                .text,
+                                                        fullNames:
+                                                            _fullNamesController
+                                                                .text,),);
                                               } else {}
                                             },
                                             child:
@@ -278,7 +290,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.pop(context);
+                            context.go('/login');
                           },
                           child: Container(
                             padding: EdgeInsets.only(
@@ -322,8 +334,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                 ],
-              )),
-    ));
+              ),),
+    ),);
   }
 }
 

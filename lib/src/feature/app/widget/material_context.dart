@@ -1,15 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:sizzle_starter/src/feature/onboarding/screens/choose_login.dart';
-import 'package:sizzle_starter/src/feature/onboarding/screens/forgot_password.dart';
-import 'package:sizzle_starter/src/feature/onboarding/screens/lawyer_login_screen.dart';
-import 'package:sizzle_starter/src/feature/onboarding/screens/reset_password_screen.dart';
-import 'package:sizzle_starter/src/feature/onboarding/screens/user_login_screen.dart';
-import 'package:sizzle_starter/src/feature/onboarding/screens/user_signup_screen.dart';
-import 'package:sizzle_starter/src/feature/onboarding/screens/verify_email_screen.dart';
+import 'package:sizzle_starter/src/core/navigation/app_navigation.dart';
 import 'package:sizzle_starter/src/feature/settings/widget/settings_scope.dart';
-import 'package:get/get.dart';
-import 'package:sizzle_starter/src/splash_screen.dart';
 /// {@template material_context}
 /// [MaterialContext] is an entry point to the material context.
 ///
@@ -27,17 +19,11 @@ class MaterialContext extends StatelessWidget {
   Widget build(BuildContext context) {
      final theme = SettingsScope.themeOf(context).theme;
      final themeData = theme.computeTheme();
-    return  GetMaterialApp(
+    return  MaterialApp.router(
           debugShowCheckedModeBanner: false,
           theme: themeData,
           themeMode: ThemeMode.light,
-          home: SplashScreen(),
-          // builder: (context, child) => MediaQuery.withClampedTextScaling(
-          //   key: _globalKey,
-          //   minScaleFactor: 1.0,
-          //   maxScaleFactor: 2.0,
-          //   child: child!,
-          // ),
+          routerConfig: AppNavigation.router,
         );
   }
 }

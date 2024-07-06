@@ -1,5 +1,10 @@
+// ignore_for_file: inference_failure_on_function_invocation
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sizzle_starter/src/core/constant/sizeConfig/size_config.dart';
+import 'package:sizzle_starter/src/feature/onboarding/screens/user_login_screen.dart';
 
 class ChooseLogin extends StatelessWidget {
   const ChooseLogin({Key? key}) : super(key: key);
@@ -64,7 +69,9 @@ class ChooseLogin extends StatelessWidget {
                               ),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            context.go('/login');
+                          },
                           child: Text(
                             "USER LOGIN",
                             style: Theme.of(context)

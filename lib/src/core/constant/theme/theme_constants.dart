@@ -1,50 +1,15 @@
-// ignore_for_file: public_member_api_docs
-
-import 'package:flutter/material.dart';
-
-const Color inActiveIconColor = Color(0xFFB6B6B6);
-const kPrimaryColor = Color(0xFFFF7643);
-const kPrimaryLightColor = Color(0xFFFFECDF);
-const kPrimaryGradientColor = LinearGradient(
-  begin: Alignment.topLeft,
-  end: Alignment.bottomRight,
-  colors: [Color(0xFFFFA53E), Color(0xFFFF7643)],
-);
-const kSecondaryColor = Color(0xFF979797);
-const kTextColor = Colors.black;
-
-const kAnimationDuration = Duration(milliseconds: 200);
-
-const headingStyle = TextStyle(
-  fontSize: 24,
-  fontWeight: FontWeight.bold,
-  color: Colors.black,
-  height: 1.5,
-);
-
-const defaultDuration = Duration(milliseconds: 250);
-
-// Form Error
-final RegExp emailValidatorRegExp =
-    RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-const String kEmailNullError = "Please Enter your email";
-const String kInvalidEmailError = "Please Enter Valid Email";
-const String kPassNullError = "Please Enter your password";
-const String kShortPassError = "Password is too short";
-const String kMatchPassError = "Passwords don't match";
-const String kNamelNullError = "Please Enter your name";
-const String kPhoneNumberNullError = "Please Enter your phone number";
-const String kAddressNullError = "Please Enter your address";
-
-const otpInputDecoration = InputDecoration(
-  contentPadding: EdgeInsets.symmetric(vertical: 16),
-  border: outlineInputBorder,
-  focusedBorder: outlineInputBorder,
-  enabledBorder: outlineInputBorder,
-  filled: false
-);
-
-const OutlineInputBorder outlineInputBorder = OutlineInputBorder(
-  borderRadius: BorderRadius.all(Radius.circular(16)),
-  gapPadding: 10,
-);
+class MyColors {
+  static int header01 = 0xff151a56;
+  static int primary = 0xff575de3;
+  static int purple01 = 0xff918fa5;
+  static int purple02 = 0xff6b6e97;
+  static int yellow01 = 0xffeaa63b;
+  static int yellow02 = 0xfff29b2b;
+  static int bg = 0xfff5f3fe;
+  static int bg01 = 0xff6f75e1;
+  static int bg02 = 0xffc3c5f8;
+  static int bg03 = 0xffe8eafe;
+  static int text01 = 0xffbec2fc;
+  static int grey01 = 0xffe9ebf0;
+  static int grey02 = 0xff9796af;
+}

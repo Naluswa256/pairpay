@@ -1,11 +1,15 @@
-// ignore_for_file: avoid_dynamic_calls
+// ignore_for_file: lines_longer_than_80_chars
 
 import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sizzle_starter/src/core/components/rest_client/src/exception/network_exception.dart';
+import 'package:sizzle_starter/src/core/helper/convertor.dart';
 import 'package:sizzle_starter/src/core/services/localStorage/model/tokens.dart';
 import 'package:sizzle_starter/src/core/services/localStorage/shared_pref.service.dart';
+import 'package:sizzle_starter/src/feature/app/model/user_model.dart';
 import 'package:sizzle_starter/src/feature/onboarding/bloc/states/authentication_bloc.dart';
 import 'package:sizzle_starter/src/feature/onboarding/bloc/events/authentication_event.dart';
+import 'package:sizzle_starter/src/feature/onboarding/data/local/user_local_service.dart';
 import 'package:sizzle_starter/src/feature/onboarding/repository/auth_repository.dart';
 
 class AuthenticationBloc
@@ -13,16 +17,21 @@ class AuthenticationBloc
   final AuthRepository authRepository;
   final SharedPreferences sharedPreferences;
   final TokenStorageService tokenStorage;
+  final UserService userService;
 
   AuthenticationBloc({
     required this.authRepository,
     required this.sharedPreferences,
     required this.tokenStorage,
+    required this.userService,
   }) : super(AuthenticationInitial()) {
     on<AppLoadedup>(_mapAppLoadedupToState);
     on<UserLogin>(_mapUserLoginToState);
     on<UserSignUp>(_mapUserSignUpToState);
     on<UserLogOut>(_mapUserLogOutToState);
+    on<VerifyEmail>(_mapVerifyEmailToState);
+    on<ForgotPassword>(_mapForgotPasswordToState);
+    on<ResetPassword>(_mapResetPasswordToState);
   }
 
   void _mapAppLoadedupToState(
@@ -52,16 +61,9 @@ class AuthenticationBloc
         email: event.email,
         password: event.password,
       );
-      final tokens = _extractTokensFromData(data);
-      if (tokens != null) {
-        await tokenStorage.setAccessToken(tokens.accessToken);
-        await tokenStorage.setRefreshToken(tokens.refreshToken);
-        emit(AppAutheticated());
-      } else {
-        emit(AuthenticationNotAuthenticated());
-      }
+      await _processUserAndTokens(data, emit);
     } catch (e) {
-      emit(AuthenticationFailure(message: e.toString()));
+      emit(AuthenticationFailure(message: _getErrorMessage(e)));
     }
   }
 
@@ -74,18 +76,26 @@ class AuthenticationBloc
       final data = await authRepository.register(
         email: event.email,
         password: event.password,
+        fullNames: event.fullNames,
       );
-      final tokens = _extractTokensFromData(data);
-      if (tokens != null) {
-        await tokenStorage.setAccessToken(tokens.accessToken);
-        await tokenStorage.setRefreshToken(tokens.refreshToken);
-        emit(AppAutheticated());
-      } else {
-        emit(AuthenticationNotAuthenticated());
-      }
+      await _processUserAndTokens(data, emit);
     } catch (e) {
-      emit(AuthenticationFailure(message: e.toString()));
+      emit(AuthenticationFailure(message: _getErrorMessage(e)));
     }
+  }
+
+  Future<void> _processUserAndTokens(
+    Map<String, Object?>? data,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    final userMap = data!['user'];
+    final user = User.fromJson(convertMap(userMap as Map<String, Object?>?));
+    await userService.saveUser(user);
+    final tokens = _extractTokensFromData(data);
+    await tokenStorage.setAccessToken(tokens.accessToken);
+    await tokenStorage.setRefreshToken(tokens.refreshToken);
+
+    emit(AppAutheticated());
   }
 
   void _mapUserLogOutToState(
@@ -97,21 +107,81 @@ class AuthenticationBloc
     emit(UserLogoutState());
   }
 
-  // Helper method to extract tokens from data
-  Token? _extractTokensFromData(Map<String, Object?>? data) {
-    if (data != null && data['tokens'] is Map<String, dynamic>) {
-      final Map<String, dynamic> tokensData =
-          data['tokens']! as Map<String, dynamic>;
-
-      final String? accessToken =
-          tokensData['access']?['token'] as String?;
-      final String? refreshToken =
-          tokensData['refresh']?['token'] as String?;
-
-      if (accessToken != null && refreshToken != null) {
-        return Token(accessToken, refreshToken);
-      }
+  void _mapVerifyEmailToState(
+    VerifyEmail event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    emit(AuthenticationLoading());
+    try {
+      await authRepository.verifyEmail(
+        otp: event.Otp,
+      );
+      emit(EmailVerified());
+    } catch (e) {
+      emit(AuthenticationFailure(message: _getErrorMessage(e)));
     }
-    return null;
+  }
+
+  void _mapForgotPasswordToState(
+    ForgotPassword event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    emit(AuthenticationLoading());
+    try {
+      await authRepository.forgotPassword(email: event.email);
+      emit(ForgotPasswordSent());
+    } catch (e) {
+      emit(AuthenticationFailure(message: _getErrorMessage(e)));
+    }
+  }
+
+  void _mapResetPasswordToState(
+    ResetPassword event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    emit(AuthenticationLoading());
+    try {
+      await authRepository.resetPassword(
+        token: event.token,
+        newPassword: event.newPassword,
+      );
+      emit(PasswordResetSuccessful());
+    } catch (e) {
+      emit(AuthenticationFailure(message: _getErrorMessage(e)));
+    }
+  }
+
+  Token _extractTokensFromData(Map<String, Object?>? json) {
+    final Object? tokensObject = json!['tokens'];
+    if (tokensObject is Map<String, Object?>) {
+      final Map<String, Object?> tokens = tokensObject;
+
+      final Object? accessObject = tokens['access'];
+      final Object? refreshObject = tokens['refresh'];
+
+      if (accessObject is Map<String, Object?> && refreshObject is Map<String, Object?>) {
+        final Map<String, Object?> access = accessObject;
+        final Map<String, Object?> refresh = refreshObject;
+
+        final String accessToken = access['token'] as String? ?? '';
+        final String refreshToken = refresh['token'] as String? ?? '';
+
+        return Token(accessToken, refreshToken);
+      } else {
+        throw Exception('Invalid tokens structure in JSON');
+      }
+    } else {
+      throw Exception('Tokens not found or invalid type in JSON');
+    }
+  }
+
+  String _getErrorMessage(Object e) {
+    if (e is CustomBackendException) {
+      return e.message;
+    } else if (e is RestClientException) {
+      return e.message;
+    } else {
+      return 'An unexpected error occurred. Please try again.';
+    }
   }
 }

@@ -226,7 +226,7 @@ class AuthInterceptor<T> extends QueuedInterceptor
 
     try {
       // Refresh the token pair
-      newTokenPair = await refreshClient.refreshToken(token);
+      newTokenPair = (await refreshClient.refreshToken(token))!;
     } on RevokeTokenException {
       // Clear the token pair
       logger.info('Revoking token pair');

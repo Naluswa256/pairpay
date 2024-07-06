@@ -1,5 +1,6 @@
-// ignore_for_file: public_member_api_docs, lines_longer_than_80_chars
+// ignore_for_file: public_member_api_docs, lines_longer_than_80_chars, non_constant_identifier_names
 import 'package:equatable/equatable.dart';
+import 'package:flutter/gestures.dart';
 
 abstract class AuthenticationEvent extends Equatable {
   const AuthenticationEvent();
@@ -45,10 +46,19 @@ class ForgotPassword extends AuthenticationEvent {
   List<Object> get props => [email];
 }
 
+class VerifyEmail extends AuthenticationEvent {
+  final String Otp;
+
+  const VerifyEmail({required this.Otp});
+
+  @override
+  List<Object> get props => [OffsetPair.zero];
+}
+
 class ResetPassword extends AuthenticationEvent {
   final String newPassword;
-
-  const ResetPassword({required this.newPassword});
+  final String token;
+  const ResetPassword({required this.newPassword, required this.token});
 
   @override
   List<Object> get props => [newPassword];

@@ -1,4 +1,6 @@
 
+// ignore_for_file: public_member_api_docs
+
 import 'package:equatable/equatable.dart';
 
 abstract class AuthenticationState extends Equatable {
@@ -25,8 +27,15 @@ class AuthenticationNotAuthenticated extends AuthenticationState {}
 class AuthenticationFailure extends AuthenticationState {
   final String message;
 
-  AuthenticationFailure({required this.message});
+  const AuthenticationFailure({required this.message});
 
   @override
   List<Object> get props => [message];
 }
+
+
+class EmailVerified extends AuthenticationState {}
+
+class ForgotPasswordSent extends AuthenticationState {}
+
+class PasswordResetSuccessful extends AuthenticationState {}

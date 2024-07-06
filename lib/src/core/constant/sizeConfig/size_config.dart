@@ -54,6 +54,7 @@ class MySize {
   static double? size140;
   static double? size160;
   static double? size180;
+  static double? size250;
 
   void init(BuildContext context) {
     _mediaQueryData = MediaQuery.of(context);
@@ -123,6 +124,7 @@ class MySize {
     size140 = scaleFactorHeight * 140;
     size160 = scaleFactorHeight * 160;
     size180 = scaleFactorHeight * 180;
+    size250 = scaleFactorHeight * 250;
   }
 
   static double getScaledSizeWidth(double size) {

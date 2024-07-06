@@ -10,11 +10,12 @@ class AuthRepository {
   Future<Map<String, Object?>?> register({
     required String email,
     required String password,
+    required String fullNames
   }) async {
     try {
       return await restClient.post(
-        '/auth/register',
-        body: {'email': email, 'password': password},
+        'v1/auth/register',
+        body: {'email': email, 'password': password,'fullNames':fullNames},
       );
     } catch (e) {
       rethrow;
@@ -27,7 +28,7 @@ class AuthRepository {
   }) async {
     try {
       return await restClient.post(
-        '/auth/login',
+        'v1/auth/login',
         body: {'email': email, 'password': password},
       );
     } catch (e) {
@@ -36,13 +37,12 @@ class AuthRepository {
   }
 
   Future<Map<String, Object?>?> verifyEmail({
-    required String email,
     required String otp,
   }) async {
     try {
       return await restClient.post(
-        '/auth/verify-email',
-        body: {'email': email, 'otp': otp},
+        'v1/auth/verify-email',
+        body: {'Otp': otp},
       );
     } catch (e) {
       rethrow;
@@ -54,7 +54,7 @@ class AuthRepository {
   }) async {
     try {
       return await restClient.post(
-        '/auth/forgot-password',
+        'v1/auth/forgot-password',
         body: {'email': email},
       );
     } catch (e) {
@@ -63,13 +63,14 @@ class AuthRepository {
   }
 
   Future<Map<String, Object?>?> resetPassword({
-    required String email,
+    required String token,
     required String newPassword,
   }) async {
     try {
       return await restClient.post(
-        '/auth/reset-password',
-        body: {'email': email, 'newPassword': newPassword},
+        'v1/auth/reset-password',
+        body: {'newPassword': newPassword},
+        queryParams: {'token': token},
       );
     } catch (e) {
       rethrow;

@@ -1,4 +1,9 @@
+
+// ignore_for_file: unused_element
+
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sizzle_starter/src/core/utils/logger.dart';
 
 /// {@template preferences_dao}
 /// Class that provides seamless access to the shared preferences.
@@ -77,28 +82,39 @@ final class TypedEntry<T extends Object> extends PreferencesEntry<T> {
   TypedEntry({
     required SharedPreferences sharedPreferences,
     required this.key,
-  }) : _sharedPreferences = sharedPreferences;
+  }) : _sharedPreferences = sharedPreferences,
+       _listeners = <VoidCallback>[];
+
 
   final SharedPreferences _sharedPreferences;
+  final List<VoidCallback> _listeners;
 
   @override
   final String key;
 
   @override
   T? read() {
-    final value = _sharedPreferences.get(key);
+    try {
+      final value = _sharedPreferences.get(key);
+      logger.info('Read value for key "$key": $value');
 
-    if (value == null) return null;
+      if (value == null) return null;
 
-    if (value is T) return value;
+      if (value is T) return value;
 
-    throw Exception(
-      'The value of $key is not of type ${T.runtimeType.toString()}',
-    );
+      throw Exception(
+        'The value of $key is not of type ${T.runtimeType.toString()}',
+      );
+    } catch (e, stackTrace) {
+      logger.error('Error reading value for key "$key"', error: e, stackTrace: stackTrace);
+      rethrow;
+    }
   }
 
   @override
-  Future<void> set(T value) => switch (value) {
+  Future<void> set(T value) async {
+    try {
+      await switch (value) {
         final int value => _sharedPreferences.setInt(key, value),
         final double value => _sharedPreferences.setDouble(key, value),
         final String value => _sharedPreferences.setString(key, value),
@@ -111,7 +127,42 @@ final class TypedEntry<T extends Object> extends PreferencesEntry<T> {
             '$T is not a valid type for a preferences entry value.',
           ),
       };
+      logger.info('Set value for key "$key": $value');
+      _notifyListeners();
+    } catch (e, stackTrace) {
+      logger.error('Error setting value for key "$key"', error: e, stackTrace: stackTrace);
+      rethrow;
+    }
+  }
 
   @override
-  Future<void> remove() => _sharedPreferences.remove(key);
+  Future<void> remove() async {
+    try {
+      await _sharedPreferences.remove(key);
+      logger.info('Removed value for key "$key"');
+       _notifyListeners();
+    } catch (e, stackTrace) {
+      logger.error('Error removing value for key "$key"', error: e, stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+  /// Adds a listener to be notified when the value of this entry changes.
+  ///
+  /// The listener will be called synchronously whenever the value is set or removed.
+  void addListener(VoidCallback listener) {
+    _listeners.add(listener);
+  }
+
+  /// Removes a listener from this entry.
+  ///
+  /// The listener will no longer be called when the value changes.
+  void removeListener(VoidCallback listener) {
+    _listeners.remove(listener);
+  }
+
+  void _notifyListeners() {
+    for (final listener in _listeners) {
+      listener();
+    }
+  }
 }

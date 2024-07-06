@@ -1,4 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/data/local/hive_helper/dashboard_database_service.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bloc/dashboard_bloc.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/bloc/all_specialization_bloc.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/bloc/lawyer_bloc.dart';
 import 'package:sizzle_starter/src/feature/app/logic/tracking_manager.dart';
 import 'package:sizzle_starter/src/feature/onboarding/bloc/authenticaton_bloc.dart';
 import 'package:sizzle_starter/src/feature/settings/bloc/settings_bloc.dart';
@@ -13,6 +17,10 @@ base class Dependencies {
     required this.settingsBloc,
     required this.errorTrackingManager,
     required this.authenticationBloc,
+    required this.homeBloc, 
+    required this.homeDatabaseService,
+    required this.specializationBloc,
+    required this.lawyerBloc
   });
 
   /// [SharedPreferences] instance, used to store Key-Value pairs.
@@ -25,6 +33,10 @@ base class Dependencies {
   final ErrorTrackingManager errorTrackingManager;
   /// [AuthenticationBloc] instance, used to handle authentication.
   final AuthenticationBloc authenticationBloc;
+  final HomeBloc homeBloc;
+  final SpecializationBloc specializationBloc;
+  final LawyerBloc lawyerBloc;
+  final HomeDataBaseService homeDatabaseService;
 }
 
 /// {@template initialization_result}

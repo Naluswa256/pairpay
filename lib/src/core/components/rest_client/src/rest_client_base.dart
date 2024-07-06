@@ -1,3 +1,5 @@
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:isolate';
@@ -56,15 +58,46 @@ abstract base class RestClientBase implements RestClient {
         );
       }
       if (result.containsKey('code') && result['code'] is int) {
-      final errorMessage = result['message'] as String?;
-      throw CustomBackendException(
-        message: '$errorMessage',
-        statusCode: statusCode, error: const {},
-      );
-    }
+        final errorMessage = result['message'] as String?;
+        throw CustomBackendException(
+          message: '$errorMessage',
+          statusCode: statusCode,
+          error: const {},
+        );
+      }
 
       if (result case {'data': final Map<String, Object?> data}) {
         return data;
+      }
+      if (result.containsKey('user') &&
+          result['user'] is Map<String, Object?> &&
+          result.containsKey('tokens') &&
+          result['tokens'] is Map<String, Object?>) {
+        return result;
+      }
+      if (result.containsKey('results') &&
+          result.containsKey('page') &&
+          result['page'] is int &&
+          result.containsKey('limit') &&
+          result['limit'] is int &&
+          result.containsKey('totalPages') &&
+          result['totalPages'] is int &&
+          result.containsKey('totalResults') &&
+          result['totalResults'] is int) {
+        return result;
+      }
+      if (result.containsKey('status') && result['status'] == 'VERIFIED') {
+        return result;
+      }
+
+      // Handle error response
+      if (result.containsKey('status') && result['status'] == 'FAILED') {
+        final errorMessage = result['error'] as String?;
+        throw CustomBackendException(
+          message: errorMessage!,
+          statusCode: statusCode,
+          error: const {},
+        );
       }
 
       return null;

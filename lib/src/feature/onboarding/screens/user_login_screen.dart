@@ -177,7 +177,8 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                                 padding: EdgeInsets.only(
                                                     top: MySize.size20!),
                                                 child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
                                                   children: <Widget>[
                                                     // Checkbox(
                                                     //   activeColor: themeData
@@ -199,16 +200,19 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                                     //                 .bodyMedium,
                                                     //             fontWeight: 500)),
                                                     GestureDetector(
-                                                      onTap: (){
-                                                        context.go('/forgotPassword');
+                                                      onTap: () {
+                                                        context.push(
+                                                            '/forgotPassword');
                                                       },
-                                                      child: Text(" Forgot Password",
+                                                      child: Text(
+                                                          " Forgot Password",
                                                           style: AppThemeCustom
                                                               .getTextStyle(
                                                                   themeData
                                                                       .textTheme
                                                                       .bodyMedium,
-                                                                  fontWeight: 600,
+                                                                  fontWeight:
+                                                                      600,
                                                                   color: themeData
                                                                       .colorScheme
                                                                       .primary)),
@@ -300,7 +304,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Get.to(SignUpScreen());
+                                context.push('/signup');
                               },
                               child: Container(
                                 margin: const EdgeInsets.only(top: 16),

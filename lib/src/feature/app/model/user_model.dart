@@ -152,12 +152,17 @@ class User{
 @JsonSerializable()
 class AvailableSlot {
   @HiveField(0)
-  final String day;
+  @JsonKey(name: '_id')
+  final String id;
 
   @HiveField(1)
-  final List<String> timeSlots;
+  final String day;
+
+  @HiveField(2)
+  final List<TimeSlot> timeSlots;
 
   AvailableSlot({
+    required this.id,
     required this.day,
     required this.timeSlots,
   });
@@ -167,34 +172,64 @@ class AvailableSlot {
   Map<String, dynamic> toJson() => _$AvailableSlotToJson(this);
 }
 
+@HiveType(typeId: 20)
+@JsonSerializable()
+class TimeSlot {
+  @HiveField(0)
+  @JsonKey(name: '_id')
+  final String id;
+
+  @HiveField(1)
+  final String startTime;
+
+  @HiveField(2)
+  final String endTime;
+
+  TimeSlot({
+    required this.id,
+    required this.startTime,
+    required this.endTime,
+  });
+
+  factory TimeSlot.fromJson(Map<String, dynamic> json) => _$TimeSlotFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TimeSlotToJson(this);
+}
+
+
 @HiveType(typeId: 2)
 @JsonSerializable()
 class EmploymentHistory {
   @HiveField(0)
-  final String companyName;
+  @JsonKey(name: '_id')
+  final String id;
 
   @HiveField(1)
-  final String jobTitle;
+  final String companyName;
 
   @HiveField(2)
-  final String description;
+  final String jobTitle;
 
   @HiveField(3)
-  final String startMonth;
+  final String description;
 
   @HiveField(4)
-  final int startYear;
+  final String startMonth;
 
   @HiveField(5)
-  final String endMonth;
+  final int startYear;
 
   @HiveField(6)
-  final int endYear;
+  final String endMonth;
 
   @HiveField(7)
+  final int? endYear;
+
+  @HiveField(8)
   final bool isCurrent;
 
   EmploymentHistory({
+    required this.id,
     required this.companyName,
     required this.jobTitle,
     required this.description,
@@ -214,24 +249,29 @@ class EmploymentHistory {
 @JsonSerializable()
 class Education {
   @HiveField(0)
-  final String institutionName;
+  @JsonKey(name: '_id')
+  final String id;
 
   @HiveField(1)
-  final String degree;
+  final String institutionName;
 
   @HiveField(2)
-  final String fieldOfStudy;
+  final String degree;
 
   @HiveField(3)
-  final int startYear;
+  final String fieldOfStudy;
 
   @HiveField(4)
-  final int endYear;
+  final int startYear;
 
   @HiveField(5)
+  final int endYear;
+
+  @HiveField(6)
   final bool currentlyAttending;
 
   Education({
+    required this.id,
     required this.institutionName,
     required this.degree,
     required this.fieldOfStudy,
@@ -245,16 +285,22 @@ class Education {
   Map<String, dynamic> toJson() => _$EducationToJson(this);
 }
 
+
 @HiveType(typeId: 4)
 @JsonSerializable()
 class SocialMediaLinkedAccount {
   @HiveField(0)
-  final String platform;
+  @JsonKey(name: '_id')
+  final String id;
 
   @HiveField(1)
+  final String platform;
+
+  @HiveField(2)
   final String url;
 
   SocialMediaLinkedAccount({
+    required this.id,
     required this.platform,
     required this.url,
   });
@@ -279,11 +325,19 @@ class Review {
   @HiveField(3)
   final ReviewUser lawyer;
 
+  @HiveField(4)
+  final DateTime createdAt;
+
+  @HiveField(5)
+  final DateTime updatedAt;
+
   Review({
     required this.rating,
     required this.comment,
     required this.user,
-    required this.lawyer
+    required this.lawyer, 
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory Review.fromJson(Map<String, dynamic> json) => _$ReviewFromJson(json);

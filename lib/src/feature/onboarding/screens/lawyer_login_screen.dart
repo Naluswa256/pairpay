@@ -1,8 +1,9 @@
-
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:sizzle_starter/src/core/constant/sizeConfig/size_config.dart';
 import 'package:sizzle_starter/src/feature/app/model/app_theme.dart';
+
 class LawyerLoginScreen extends StatefulWidget {
   @override
   _LawyerLoginScreenState createState() => _LawyerLoginScreenState();
@@ -47,7 +48,8 @@ class _LawyerLoginScreenState extends State<LawyerLoginScreen> {
                   child: Column(
                     children: <Widget>[
                       Image(
-                        image: AssetImage('assets/images/logo-removebg-preview.png'),
+                        image: AssetImage(
+                            'assets/images/logo-removebg-preview.png'),
                         height: MySize.size180,
                       ),
                       Container(
@@ -94,8 +96,7 @@ class _LawyerLoginScreenState extends State<LawyerLoginScreen> {
                                   hintStyle: AppThemeCustom.getTextStyle(
                                       themeData.textTheme.titleSmall,
                                       letterSpacing: 0.1,
-                                      color:
-                                          themeData.colorScheme.secondary,
+                                      color: themeData.colorScheme.secondary,
                                       fontWeight: 500),
                                   prefixIcon: Icon(MdiIcons.lockOutline),
                                   suffixIcon: IconButton(
@@ -153,20 +154,20 @@ class _LawyerLoginScreenState extends State<LawyerLoginScreen> {
                                 ],
                               ),
                               child: ElevatedButton(
-                                style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all(
-                                themeData.colorScheme.primary),
-                            shape:
-                                WidgetStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(
-                                    MySize.getScaledSizeHeight(
-                                        8))), // Square corners
-                              ),
-                            ),
-                          ),
-                                  onPressed: () {
-                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStateProperty.all(
+                                        themeData.colorScheme.primary),
+                                    shape: WidgetStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                MySize.getScaledSizeHeight(
+                                                    8))), // Square corners
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: () {},
                                   child: Text("LOGIN",
                                       style: AppThemeCustom.getTextStyle(
                                           themeData.textTheme.labelLarge,
@@ -184,6 +185,7 @@ class _LawyerLoginScreenState extends State<LawyerLoginScreen> {
               ),
               GestureDetector(
                 onTap: () {
+                  context.go('/signup');
                 },
                 child: Container(
                   margin: EdgeInsets.only(top: 16),

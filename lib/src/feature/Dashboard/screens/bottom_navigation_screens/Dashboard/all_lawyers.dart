@@ -94,7 +94,7 @@ class _AllLawyerScreenState extends State<AllLawyerScreen> {
           color: const Color(0xff222B45),
         ),
         title: Text(
-          "All Lawyers in ${widget.specialization}",
+          "All Lawyers in ${widget.specialization.name}",
           style: const TextStyle(
               color: Color(0xff222B45),
               fontFamily: "Poppins-SemiBold",
@@ -168,6 +168,7 @@ class _AllLawyerScreenState extends State<AllLawyerScreen> {
                         return LawyerCard(
                           lawyerNames: lawyer.fullNames,
                           reviewCount: lawyer.numOfReviews,
+                          isVerified: lawyer.isVerified,
 
                         );
                       },

@@ -11,6 +11,7 @@ class LawyerCard extends StatelessWidget {
   final double rating; // Changed to double for the rating value
   final int reviewCount; // Changed to int for the number of reviews
   final bool isOnline;
+  final bool isVerified;
 
   LawyerCard({
     Key? key,
@@ -21,6 +22,7 @@ class LawyerCard extends StatelessWidget {
     this.rating = 0.0, // Default value for rating
     this.reviewCount = 0, // Default value for review count
     this.isOnline = false,
+    required this.isVerified
   }) : super(key: key);
 
   @override
@@ -88,7 +90,7 @@ class LawyerCard extends StatelessWidget {
           ),
           badges.Badge(
             position: badges.BadgePosition.topEnd(top: -3, end: -25),
-            showBadge: true,
+            showBadge: isVerified,
             ignorePointer: false,
             onTap: () {},
             badgeContent: Icon(Icons.check, color: Colors.white, size: 10),
@@ -122,18 +124,23 @@ class LawyerCard extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-              padding: EdgeInsets.only(top: MySize.getScaledSizeHeight(5)),
-              child: Center(
-                child: RatingBar(
-                  filledIcon: Icons.star,
-                  size: 25,
-                  emptyIcon: Icons.star_border,
-                  onRatingChanged: (value) => debugPrint('$value'),
-                  initialRating: reviewCount.toDouble(),
-                  maxRating: 5,
-                ),
-              )),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                  padding: EdgeInsets.only(top: MySize.getScaledSizeHeight(5)),
+                  child: Center(
+                    child: RatingBar(
+                      filledIcon: Icons.star,
+                      size: 20,
+                      emptyIcon: Icons.star_border,
+                      onRatingChanged: (value) => debugPrint('$value'),
+                      initialRating: reviewCount.toDouble(),
+                      maxRating: 5,
+                    ),
+                  )),
+            ],
+          ),
           Padding(
             padding: EdgeInsets.only(top: MySize.getScaledSizeHeight(4)),
             child: Text(

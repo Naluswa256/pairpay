@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, unused_local_variable, lines_longer_than_80_chars
+// ignore_for_file: public_member_api_docs, unused_local_variable, lines_longer_than_80_chars, inference_failure_on_instance_creation
 
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +15,7 @@ import 'package:sizzle_starter/src/feature/Dashboard/screens/bloc/dashboard_bloc
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bloc/dashboard_status/dashboard_status.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bloc/events/dashboard_event.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bloc/states/dashboard_state.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/all_lawyers.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/widgets/upcoming_appointment_card.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/widgets/category_icon.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/widgets/lawyer_card.dart';
@@ -94,8 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     as AppointmentResponse;
                 final popularLawyers =
                     cmPost.data['popularLawyers'] as UserResponse;
-                logger.info(
-                    'The length of popular Lawyers ${popularLawyers.results.length}');
                 return LiquidPullToRefresh(
                   backgroundColor: Colors.white,
                   color: Theme.of(context).colorScheme.primary,
@@ -140,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => context.goNamed('allLawyers'),
+                        onTap: () => context.goNamed('searchLawyerByName'),
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                           child: TextField(
@@ -311,6 +310,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: LawyerCard(
                                 lawyerNames: lawyer.fullNames,
                                 reviewCount: lawyer.reviewsReceived.length,
+                                isVerified: lawyer.isVerified,
+                                photo: lawyer.avatar,
                               ),
                             );
                           },
@@ -394,9 +395,18 @@ class CategoryIcons extends StatelessWidget {
           children: specializationResponse.results.map((specialization) {
             final IconData icon =
                 iconMap[specialization.name] ?? Icons.category;
-            return CategoryIcon(
-              icon: icon,
-              text: specialization.name,
+            return GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => AllLawyerScreen(specialization: specialization),
+                  ),
+                );
+              },
+              child: CategoryIcon(
+                icon: icon,
+                text: specialization.name,
+              ),
             );
           }).toList(),
         ),

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:sizzle_starter/src/core/constant/sizeConfig/size_config.dart';
 import 'package:sizzle_starter/src/feature/app/model/app_theme.dart';
@@ -10,6 +11,7 @@ import 'package:sizzle_starter/src/feature/initialization/widget/dependencies_sc
 import 'package:sizzle_starter/src/feature/onboarding/bloc/authenticaton_bloc.dart';
 import 'package:sizzle_starter/src/feature/onboarding/bloc/events/authentication_event.dart';
 import 'package:sizzle_starter/src/feature/onboarding/bloc/states/authentication_bloc.dart';
+
 class ForgotPasswordScreen extends StatefulWidget {
   @override
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
@@ -43,7 +45,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         listener: (context, state) {
           if (state is ForgotPasswordSent) {
             _showResetEmailSentDialog();
-           
           } else if (state is AuthenticationFailure) {
             _showError(state.message);
           }
@@ -161,12 +162,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                                   ),
                                                 ),
                                                 onPressed: () {
-                                                          if (_formKey.currentState!
-                                                .validate()) {
-                                              authenticationBloc.add(
-                                                 ForgotPassword(email:controllermobile.text)
-                                              );
-                                            }
+                                                  if (_formKey.currentState!
+                                                      .validate()) {
+                                                    authenticationBloc.add(
+                                                        ForgotPassword(
+                                                            email:
+                                                                controllermobile
+                                                                    .text));
+                                                  }
                                                 },
                                                 child: state
                                                         is AuthenticationLoading
@@ -206,7 +209,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       left: 12,
                       child: BackButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          context.pop();
                         },
                         color: Colors.white,
                       ),
@@ -227,21 +230,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         textColor: Colors.white,
         fontSize: 16.0);
   }
-   void _showResetEmailSentDialog() {
+
+  void _showResetEmailSentDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-          title: const Text("Check Your Email"),
-          content: const Text("Password reset email sent successfully."),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-            ),
-          ],
-        ),
+        title: const Text("Check Your Email"),
+        content: const Text("Password reset email sent successfully."),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("OK"),
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+          ),
+        ],
+      ),
     );
   }
 }

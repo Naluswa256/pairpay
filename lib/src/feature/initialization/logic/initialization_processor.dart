@@ -15,6 +15,8 @@ import 'package:sizzle_starter/src/feature/Dashboard/data/local/hive_helper/dash
 import 'package:sizzle_starter/src/feature/Dashboard/data/remote/dashboard_api_provider.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/repository/dashboard_repository.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bloc/dashboard_bloc.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Appointment/bloc/appointment_bloc.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Appointment/bloc/request_appointment_bloc.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/bloc/all_specialization_bloc.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/bloc/lawyer_bloc.dart';
 import 'package:sizzle_starter/src/feature/app/logic/tracking_manager.dart';
@@ -51,25 +53,31 @@ final class InitializationProcessor {
     final restClient = _initRestClient(inMemoryTokenStorage);
     final authBlocController = await _initAuthenticationBlocController(
         sharedPreferences, tokenStorage, inMemoryTokenStorage, restClient);
-    final dashboardApiProvider = DashboardApiProvider(restClient: restClient, userService: userService);
+    final dashboardApiProvider =
+        DashboardApiProvider(restClient: restClient, userService: userService);
     final homeDatabaseService = HomeDataBaseService();
     final homeDatabaseProvider =
         HomeDataBaseProvider(homeDataBaseService: homeDatabaseService);
     final homeRepository =
         HomeRepository(dashboardApiProvider, homeDatabaseProvider);
     final homeBloc = HomeBloc(homeRepository);
-    final specializationBloc = SpecializationBloc(apiProvider: dashboardApiProvider);
+    final specializationBloc =
+        SpecializationBloc(apiProvider: dashboardApiProvider);
+    final appointmentBloc = AppointmentBloc(
+        apiProvider: dashboardApiProvider, dbProvider: homeDatabaseProvider);
     final lawyerBloc = LawyerBloc(apiProvider: dashboardApiProvider);
+    final requestAppointmentBloc =
+        RequestAppointmentBloc(apiProvider: dashboardApiProvider);
     return Dependencies(
         sharedPreferences: sharedPreferences,
         settingsBloc: settingsBloc,
         errorTrackingManager: errorTrackingManager,
         authenticationBloc: authBlocController.authenticationBloc,
         homeBloc: homeBloc,
-        specializationBloc:specializationBloc,
+        specializationBloc: specializationBloc,
         homeDatabaseService: homeDatabaseService,
-        lawyerBloc: lawyerBloc
-        );
+        lawyerBloc: lawyerBloc,
+        appointmentBloc: appointmentBloc, requestAppointmentBloc: requestAppointmentBloc);
   }
 
   RestClientDio _initRestClient(
@@ -97,7 +105,9 @@ final class InitializationProcessor {
         'Authorization': 'Bearer ${tokenPair.accessToken}',
       },
     ));
-
+    // Set connection and receive timeouts
+    dio.options.connectTimeout = const Duration(seconds: 60); // 5 seconds
+    dio.options.receiveTimeout = const Duration(seconds: 60); // 5 seconds
     return restClient;
   }
 

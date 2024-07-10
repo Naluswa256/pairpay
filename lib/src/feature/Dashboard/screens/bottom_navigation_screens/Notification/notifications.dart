@@ -16,12 +16,6 @@ class _NotificationsState extends State<Notifications> {
       'title': 'New Message',
       'body': 'You have a new message from John Doe.',
     },
-    {
-      'type': 'clickable',
-      'title': 'New Friend Request',
-      'body': 'John Doe sent you a friend request.',
-      'navigateTo': '/friend_request',
-    },
   ];
 
   @override
@@ -42,8 +36,6 @@ class _NotificationsState extends State<Notifications> {
           dynamic notification = notifications[index];
           if (notification['type'] == 'basic') {
             return buildBasicNotification(notification);
-          } else if (notification['type'] == 'clickable') {
-            return buildClickableNotification(notification);
           } else {
             return SizedBox.shrink();
           }
@@ -56,43 +48,6 @@ class _NotificationsState extends State<Notifications> {
     return ListTile(
       title: Text(notification['title'] as String),
       subtitle: Text(notification['body'] as String),
-      trailing: IconButton(
-        icon: Icon(Icons.delete),
-        onPressed: () {
-          // Handle delete action
-          setState(() {
-            notifications.remove(notification);
-          });
-        },
-      ),
-    );
-  }
-
-  Widget buildClickableNotification(dynamic notification) {
-    bool highlightClicked = false;
-
-    return ListTile(
-      title: Text(notification['title'] as String),
-      subtitle: Row(
-        children: [
-          Text(notification['body'] as String),
-          SizedBox(width: 8),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                highlightClicked = !highlightClicked;
-              });
-            },
-            child: Text(
-              'Click Here',
-              style: TextStyle(
-                color: highlightClicked ? Colors.blueAccent : Colors.blue,
-                decoration: highlightClicked ? TextDecoration.underline : null,
-              ),
-            ),
-          ),
-        ],
-      ),
       trailing: IconButton(
         icon: Icon(Icons.delete),
         onPressed: () {

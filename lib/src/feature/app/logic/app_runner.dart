@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart' as bloc_concurrency;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -49,6 +50,7 @@ final class AppRunner {
         Hive.registerAdapter(UserAdapter());
         final homeDataBaseService = result.dependencies.homeDatabaseService;
         await homeDataBaseService.initDataBase();
+        await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
         runApp(App(result: result));
       } catch (e, stackTrace) {
         logger.error('Initialization failed', error: e, stackTrace: stackTrace);

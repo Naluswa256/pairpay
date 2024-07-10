@@ -2,6 +2,7 @@
 
 import 'package:sizzle_starter/src/core/components/rest_client/src/rest_client_dio.dart';
 import 'package:sizzle_starter/src/core/utils/logger.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Appointment/model/appointment_request_body.dart';
 import 'package:sizzle_starter/src/feature/app/model/user_model.dart';
 import 'package:sizzle_starter/src/feature/onboarding/data/local/user_local_service.dart';
 
@@ -38,7 +39,24 @@ class DashboardApiProvider {
       rethrow;
     }
   }
-  
+   Future<Map<String, Object?>?> fetchLawyerAvailability({required String lawyerId}) async {
+    try {
+      return await restClient.get('v1/lawyers/$lawyerId/availability/');
+    } catch (e) {
+      logger.error('Error fetching specializations: $e');
+      rethrow;
+    }
+  }
+   Future<Map<String, Object?>?> createAppointement({required AppointmentRequest appointment}) async {
+    try {
+      return await restClient.post(
+        'v1/appointments',
+        body: appointment.toJson(),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
    
   Future<Map<String, Object?>?> getAppointmentsByUser() async {
     try {
@@ -91,7 +109,7 @@ class DashboardApiProvider {
         'limit': limit.toString(),
         'page': page.toString(),
       };
-      return await restClient.get('v1/lawyer/search', queryParams: queryParams);
+      return await restClient.get('v1/lawyers/search', queryParams: queryParams);
     } catch (e) {
       logger.error('Error searching specializations: $e');
       rethrow;

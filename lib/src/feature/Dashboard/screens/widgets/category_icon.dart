@@ -16,38 +16,34 @@ class CategoryIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     MySize().init(context);
 
-    return InkWell(
-      splashColor: Color(MyColors.bg01),
-      onTap: () {},
-      child: Padding(
-        padding: EdgeInsets.all(MySize.getScaledSizeWidth(4.0)),
-        child: Column(
-          children: [
-            Container(
-              width: MySize.getScaledSizeWidth(50),
-              height: MySize.getScaledSizeHeight(50),
-              decoration: BoxDecoration(
-                color: Color(MyColors.bg),
-                borderRadius: BorderRadius.circular(MySize.getScaledSizeWidth(50)),
-              ),
-              child: Icon(
-                icon,
-                color: Color(MyColors.primary),
-              ),
+    return Padding(
+      padding: EdgeInsets.all(MySize.getScaledSizeWidth(4.0)),
+      child: Column(
+        children: [
+          Container(
+            width: MySize.getScaledSizeWidth(50),
+            height: MySize.getScaledSizeHeight(50),
+            decoration: BoxDecoration(
+              color: Color(MyColors.bg),
+              borderRadius: BorderRadius.circular(MySize.getScaledSizeWidth(50)),
             ),
-            SizedBox(
-              height: MySize.getScaledSizeHeight(10),
+            child: Icon(
+              icon,
+              color: Color(MyColors.primary),
             ),
-            Text(
-              text,
-              style: TextStyle(
-                color: Color(MyColors.primary),
-                fontSize: MySize.getScaledSizeHeight(12),
-                fontWeight: FontWeight.w600,
-              ),
+          ),
+          SizedBox(
+            height: MySize.getScaledSizeHeight(10),
+          ),
+          Text(
+            text,
+            style: TextStyle(
+              color: Color(MyColors.primary),
+              fontSize: MySize.getScaledSizeHeight(12),
+              fontWeight: FontWeight.w600,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

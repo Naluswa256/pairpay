@@ -43,6 +43,7 @@ class HomeDataBaseService {
       Hive.registerAdapter(AttendeeAdapter());
       Hive.registerAdapter(SpecializationAdapter());
       Hive.registerAdapter(SpecializationPopulatedAdapter());
+      Hive.registerAdapter(TimeSlotAdapter());
       _specializationsBox =
           await Hive.openBox<SpecializationResponse>(_specializationsKey);
       _appointmentsByUserBox =

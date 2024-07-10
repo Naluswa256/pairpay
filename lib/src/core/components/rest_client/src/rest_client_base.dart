@@ -75,6 +75,10 @@ abstract base class RestClientBase implements RestClient {
           result['tokens'] is Map<String, Object?>) {
         return result;
       }
+      if (result.containsKey('availableDays') &&
+          result['availableDays'] is List<Object?>) {
+        return result;
+      }
       if (result.containsKey('results') &&
           result.containsKey('page') &&
           result['page'] is int &&

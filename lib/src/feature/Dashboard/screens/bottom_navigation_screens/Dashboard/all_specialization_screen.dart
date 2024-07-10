@@ -1,9 +1,12 @@
+// ignore_for_file: inference_failure_on_instance_creation
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/models/specialization_model.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/all_lawyers.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/bloc/all_specialization_bloc.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/bloc/events/specialization_event.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/bloc/states/specialization_state.dart';
@@ -23,6 +26,7 @@ class AllSpecializationsScreen extends StatefulWidget {
   _AllSpecializationsScreenState createState() =>
       _AllSpecializationsScreenState();
 }
+
 class _AllSpecializationsScreenState extends State<AllSpecializationsScreen> {
   final ScrollController _scrollController = ScrollController();
   late SpecializationBloc _specializationBloc;
@@ -34,10 +38,12 @@ class _AllSpecializationsScreenState extends State<AllSpecializationsScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _specializationBloc =
-        DependenciesScope.of(context).specializationBloc;
-    _specializationBloc.add(LoadSpecializationsFromCache(
-        specializationResponse: widget.specializationResponse));
+    _specializationBloc = DependenciesScope.of(context).specializationBloc;
+    _specializationBloc.add(
+      LoadSpecializationsFromCache(
+        specializationResponse: widget.specializationResponse,
+      ),
+    );
   }
 
   @override
@@ -60,20 +66,24 @@ class _AllSpecializationsScreenState extends State<AllSpecializationsScreen> {
       if (_hasMorePages) {
         _currentPage++;
         _specializationBloc.add(
-            FetchSpecializations(page: _currentPage, limit: 10));
+          FetchSpecializations(page: _currentPage, limit: 10),
+        );
       }
     }
   }
 
   void _performSearch(String query) {
     if (_searchController.text.isNotEmpty && query.isEmpty) {
-      _specializationBloc.add(LoadSpecializationsFromCache(
-        specializationResponse: widget.specializationResponse,
-      ));
+      _specializationBloc.add(
+        LoadSpecializationsFromCache(
+          specializationResponse: widget.specializationResponse,
+        ),
+      );
     } else if (query.isNotEmpty) {
       if (_searchDebounce?.isActive ?? false) _searchDebounce!.cancel();
-      _searchDebounce = Timer(Duration(milliseconds: 500), () {
-        _specializationBloc.add(SearchSpecializations(query: query, page: 1, limit: 10));
+      _searchDebounce = Timer(Duration(milliseconds: 5000), () {
+        _specializationBloc
+            .add(SearchSpecializations(query: query, page: 1, limit: 10));
       });
     }
   }
@@ -144,46 +154,77 @@ class _AllSpecializationsScreenState extends State<AllSpecializationsScreen> {
               ),
             ),
             Expanded(
-              child: BlocBuilder<SpecializationBloc, SpecializationState>(
+              child: BlocListener<SpecializationBloc, SpecializationState>(
                 bloc: _specializationBloc,
-                builder: (context, state) {
-                  if (state is SpecializationLoadSuccess) {
-                    return GridView.builder(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      controller: _scrollController,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 5.0,
-                      ),
-                      itemCount: state.specializations.results.length,
-                      itemBuilder: (context, index) {
-                        final specialization =
-                            state.specializations.results[index];
-                        return GestureDetector(
-                          onTap: () => context.go('allLawyers', extra: specialization),
-                          child: CategoryIcon(
-                            icon: CategoryIcons.iconMap[specialization.name] ?? Icons.category,
-                            text: specialization.name,
-                          ),
-                        );
-                      },
-                    );
-                  } else if (state is SpecializationLoadFailure) {
-                    final String errorMsg = state.error;
-                    final bool isNetworkError = errorMsg.contains('ConnectionException');
-                    return CommonErrorPage(
-                      isForNetwork: isNetworkError,
-                      description: errorMsg,
-                      onRetry: () {
-                        _specializationBloc.add(
-                            FetchSpecializations(page: _currentPage, limit: 10));
-                      },
-                    );
-                  } else {
-                    return CustomLoading.showWithStyle(context);
-                  }
+                listener: (context, state) {
+                  // if (state is SpecializationLoadFailure) {
+                  //   final String errorMsg = state.error;
+                  //   final bool isNetworkError =
+                  //       errorMsg.contains('ConnectionException');
+                  //   if (isNetworkError) {
+                  //     _specializationBloc.add(LoadSpecializationsFromCache(
+                  //       specializationResponse: widget.specializationResponse,
+                  //     ));
+                  //   }
+                  // }
                 },
+                child: BlocBuilder<SpecializationBloc, SpecializationState>(
+                  bloc: _specializationBloc,
+                  builder: (context, state) {
+                    if (state is SpecializationLoadSuccess) {
+                      return GridView.builder(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        controller: _scrollController,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 5,
+                          mainAxisSpacing: 5.0,
+                        ),
+                        itemCount: state.specializations.results.length,
+                        itemBuilder: (context, index) {
+                          final specialization =
+                              state.specializations.results[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) => AllLawyerScreen(specialization: specialization),
+                                ),
+                              );
+                            },
+                            child: CategoryIcon(
+                              icon:
+                                  CategoryIcons.iconMap[specialization.name] ??
+                                      Icons.category,
+                              text: specialization.name,
+                            ),
+                          );
+                        },
+                      );
+                    } else if (state is SpecializationLoadFailure) {
+                      final String errorMsg = state.error;
+                      final bool isNetworkError =
+                          errorMsg.contains('ConnectionException');
+                      return CommonErrorPage(
+                        isForNetwork: isNetworkError,
+                        description: isNetworkError
+                            ? 'No Internet Connection'
+                            : errorMsg,
+                        onRetry: () {
+                          _specializationBloc.add(
+                            FetchSpecializations(
+                              page: _currentPage,
+                              limit: 10,
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return CustomLoading.showWithStyle(context);
+                    }
+                  },
+                ),
               ),
             ),
           ],

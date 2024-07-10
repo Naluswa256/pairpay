@@ -1,6 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/data/local/hive_helper/dashboard_database_service.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bloc/dashboard_bloc.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Appointment/bloc/appointment_bloc.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Appointment/bloc/request_appointment_bloc.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/bloc/all_specialization_bloc.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/bloc/lawyer_bloc.dart';
 import 'package:sizzle_starter/src/feature/app/logic/tracking_manager.dart';
@@ -20,7 +22,9 @@ base class Dependencies {
     required this.homeBloc, 
     required this.homeDatabaseService,
     required this.specializationBloc,
-    required this.lawyerBloc
+    required this.lawyerBloc, 
+    required this.appointmentBloc, 
+    required this.requestAppointmentBloc
   });
 
   /// [SharedPreferences] instance, used to store Key-Value pairs.
@@ -35,8 +39,10 @@ base class Dependencies {
   final AuthenticationBloc authenticationBloc;
   final HomeBloc homeBloc;
   final SpecializationBloc specializationBloc;
+  final AppointmentBloc appointmentBloc;
   final LawyerBloc lawyerBloc;
   final HomeDataBaseService homeDatabaseService;
+  final RequestAppointmentBloc requestAppointmentBloc;
 }
 
 /// {@template initialization_result}

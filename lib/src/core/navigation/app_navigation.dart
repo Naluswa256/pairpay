@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizzle_starter/src/core/network_health_check/network_inherited_widget.dart';
-import 'package:sizzle_starter/src/feature/Dashboard/models/specialization_model.dart';import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Appointment/appointments.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/models/specialization_model.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Appointment/appointments.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/all_lawyers.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/all_specialization_screen.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/dashboard_screen.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/lawyer_detail_screen.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/request_appointement.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/search_lawyer.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Notification/notifications.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Profile/profile.dart';
 import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/sub_profile.dart';
@@ -69,7 +71,7 @@ class AppNavigation {
         path: '/forgotPassword',
         builder: (context, state) => ForgotPasswordScreen(),
       ),
-      
+
       /// MainWrapper
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) => NetworkAwareWidget(
@@ -85,21 +87,13 @@ class AppNavigation {
               GoRoute(
                 path: "/home",
                 name: "Home",
-                builder: (BuildContext context, GoRouterState state) => 
-                    BlocProvider(create: (BuildContext context)=>DependenciesScope.of(context).homeBloc,
-                    child: const HomeScreen(),),
+                builder: (BuildContext context, GoRouterState state) =>
+                    BlocProvider(
+                  create: (BuildContext context) =>
+                      DependenciesScope.of(context).homeBloc,
+                  child: const HomeScreen(),
+                ),
                 routes: [
-                  GoRoute(
-                    path: 'allLawyers',
-                    name: 'allLawyers',
-                    pageBuilder: (context, state) => CustomTransitionPage<void>(
-                      key: state.pageKey,
-                      child: AllLawyerScreen(specialization: state.extra! as Specialization,),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) =>
-                              FadeTransition(opacity: animation, child: child),
-                    ),
-                  ),
                   GoRoute(
                     path: 'lawyerDetail',
                     name: 'lawyerDetail',
@@ -109,18 +103,27 @@ class AppNavigation {
                     },
                   ),
                   GoRoute(
-                    path: 'bookingScreen',
-                    name: 'bookingScreen',
+                    path: 'appointments/:lawyerId',
+                    name: 'Appointments',
+                    builder: (context, state) => AppointementsPage(
+                      key: state.pageKey, lawyerId: state.pathParameters['lawyerId']!,
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'searchLawyerByName',
+                    name: 'searchLawyerByName',
                     builder: (context, state) {
-                      return BookingScreen();
+                      return const SearchLawyerByNameScreen();
                     },
                   ),
                   GoRoute(
                     path: 'allSpecializations',
                     name: 'allSpecializations',
                     builder: (context, state) {
-                      final specializationResponse = state.extra! as SpecializationResponse;
-                      return AllSpecializationsScreen(specializationResponse:specializationResponse);
+                      final specializationResponse =
+                          state.extra! as SpecializationResponse;
+                      return AllSpecializationsScreen(
+                          specializationResponse: specializationResponse);
                     },
                   ),
                 ],
@@ -131,11 +134,9 @@ class AppNavigation {
             navigatorKey: _shellNavigatorAppointments,
             routes: <RouteBase>[
               GoRoute(
-                path: '/appointments',
-                name: 'Appointments',
-                builder: (context, state) => AppointementsPage(
-                  key: state.pageKey,
-                ),
+                path: '/appointmentsAll',
+                name: 'AppointmentsAll',
+                builder: (context, state) => const AllAppointmentsScreen()
               ),
               // Add more routes specific to the Appointments tab as needed
             ],

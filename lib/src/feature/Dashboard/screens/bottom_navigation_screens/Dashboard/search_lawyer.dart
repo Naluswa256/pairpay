@@ -49,7 +49,7 @@ class _SearchLawyerByNameScreenState extends State<SearchLawyerByNameScreen> {
       // Handle clearing search results or any other specific action
     } else if (query.isNotEmpty) {
       if (_searchDebounce?.isActive ?? false) _searchDebounce!.cancel();
-      _searchDebounce = Timer(const Duration(milliseconds: 500), () {
+      _searchDebounce = Timer(const Duration(milliseconds: 5000), () {
         _lawyerBloc.add(SearchLawyers(
           query: query,
           page: 1,
@@ -61,7 +61,7 @@ class _SearchLawyerByNameScreenState extends State<SearchLawyerByNameScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Colors.white,
+       // backgroundColor: Colors.white,
         appBar: AppBar(
           centerTitle: true,
           elevation: 0,
@@ -104,19 +104,10 @@ class _SearchLawyerByNameScreenState extends State<SearchLawyerByNameScreen> {
                       color: Color(0xff6B779A),
                       fontSize: 14,
                     ),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                              _performSearch('');
-                            },
-                          )
-                        : IconButton(
+                    suffixIcon: IconButton(
                             icon: const Icon(Icons.search),
                             onPressed: () {
-                              _searchController.clear();
-                              _performSearch(_searchController.text);
+                             // _performSearch(_searchController.text);
                             },
                           ),
                     contentPadding: const EdgeInsets.only(
@@ -129,6 +120,7 @@ class _SearchLawyerByNameScreenState extends State<SearchLawyerByNameScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 20,),
               Expanded(
                 child: BlocBuilder<LawyerBloc, LawyerState>(
                   builder: (context, state) {
@@ -140,7 +132,7 @@ class _SearchLawyerByNameScreenState extends State<SearchLawyerByNameScreen> {
                           physics: const AlwaysScrollableScrollPhysics(),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
+                            crossAxisCount: 2,
                             crossAxisSpacing: 5,
                             mainAxisSpacing: 5.0,
                           ),
@@ -150,6 +142,7 @@ class _SearchLawyerByNameScreenState extends State<SearchLawyerByNameScreen> {
                             return LawyerCard(
                               lawyerNames: lawyer.fullNames,
                               reviewCount: lawyer.numOfReviews,
+                              isVerified: lawyer.isVerified,
                               // Add other properties as needed
                             );
                           },

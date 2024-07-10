@@ -1,405 +1,429 @@
-// ignore_for_file: public_member_api_docs
-
 import 'package:flutter/material.dart';
-import 'package:sizzle_starter/src/core/constant/theme/theme_constants.dart';
-import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/components/date_picker.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sizzle_starter/src/core/utils/logger.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/models/appointment_model.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Appointment/bloc/appointment_bloc.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Appointment/bloc/events/appointment_events.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Appointment/bloc/states/appointement_states.dart';
+import 'package:intl/intl.dart';
+import 'package:sizzle_starter/src/feature/Dashboard/screens/bottom_navigation_screens/Dashboard/dashboard_screen.dart';
+import 'package:sizzle_starter/src/feature/app/model/user_model.dart';
+import 'package:sizzle_starter/src/feature/initialization/widget/dependencies_scope.dart';
+import 'package:sizzle_starter/src/feature/onboarding/data/local/user_local_service.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO; 
 
-class AppointementsPage extends StatefulWidget {
-  const AppointementsPage({super.key});
+class AllAppointmentsScreen extends StatefulWidget {
+
+  const AllAppointmentsScreen({Key? key,}) : super(key: key);
 
   @override
-  State<AppointementsPage> createState() => _AppointementsPageState();
+  State<AllAppointmentsScreen> createState() => _AllAppointmentsScreenState();
 }
 
-class _AppointementsPageState extends State<AppointementsPage> {
-  int selectedIndex = 0;
-  bool isAnonymous = false;
-  TimeOfDay? selectedStartTime;
-  TimeOfDay? selectedEndTime;
-  String selectedDuration = '30 minutes';
-  String? selectedCallType;
-  String? consultationTopic;
-  String? consultationDetails;
+enum FilterStatus { Confirmed, Completed, Cancelled }
 
-  final List<Map<String, dynamic>> timeSlots = [
-    {'start': '10:00 AM', 'end': '11:00 AM', 'selected': false},
-    {'start': '12:00 PM', 'end': '1:00 PM', 'selected': true},
-    {'start': '2:00 PM', 'end': '3:00 PM', 'selected': false},
-    {'start': '4:00 PM', 'end': '5:00 PM', 'selected': false},
-  ];
+class _AllAppointmentsScreenState extends State<AllAppointmentsScreen> {
+  FilterStatus status = FilterStatus.Confirmed;
+  Alignment _alignment = Alignment.centerLeft;
+  late AppointmentBloc _appointmentBloc;
+  late IO.Socket socket;
+  User? _user;
+  final UserService _userService = UserService();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _appointmentBloc = DependenciesScope.of(context).appointmentBloc;
+    _appointmentBloc.add(
+    LoadAppointmentsFromCache(),
+    );
+  }
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+    connectToSocket();
+  }
 
-  final List<String> durations = ['30 minutes', '60 minutes', '90 minutes'];
-  final List<String> callTypes = [
-    'Video call',
-    'Phone call',
-    'Physical meeting'
-  ];
+  void connectToSocket() {
+    const String renderUrl = 'https://lawyer-consult-api.onrender.com'; 
+    final IO.Socket socket = IO.io(renderUrl, IO.OptionBuilder()
+    .setTransports(['websocket'])
+    .disableAutoConnect()
+    .build());
 
-  onClick(int index) {
+  socket.onConnect((_) {
+    logger.info('connected');
+    socket.emit('register', {'userId': _user!.id});
+  });
+
+  socket.on('disconnect', (_) => logger.info('disconnected'));
+
+  socket.on('new appointment', (data) {
+    logger.info('New appointment: $data');
+  });
+
+  socket.connect();
+  }
+  
+  
+  Future<void> _loadUser() async {
+    final User? user = await _userService.getUser();
     setState(() {
-      selectedIndex = index;
+      _user = user;
     });
   }
 
-  Future<void> pickStartTime(BuildContext context) async {
-    final initialTime = TimeOfDay.now();
-    final pickedTime = await showTimePicker(
-      context: context,
-      initialTime: initialTime,
-    );
-    if (pickedTime != null) {
-      setState(() {
-        selectedStartTime = pickedTime;
-        _calculateEndTime();
-      });
-    }
+  @override
+  void dispose() {
+    socket.disconnect();
+    socket.dispose();
+    super.dispose();
   }
-
-  void _calculateEndTime() {
-    if (selectedStartTime != null) {
-      int durationMinutes = int.parse(selectedDuration.split(' ')[0]);
-      final endTime = selectedStartTime!.replacing(
-        hour: selectedStartTime!.hour + durationMinutes ~/ 60,
-        minute: selectedStartTime!.minute + durationMinutes % 60,
-      );
-      setState(() {
-        selectedEndTime = endTime;
-      });
-    }
-  }
-
+  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              height: MediaQuery.sizeOf(context).height * 0.40,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Color(MyColors.primary),
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: const Radius.circular(30)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 38, left: 18, right: 18),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                          child: IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(Icons.arrow_back),
-                            color: const Color(0xff222B45),
-                          ),
-                        ),
-                        Spacer(),
-                        Text(
-                          "Book Your Appointment",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              letterSpacing: 1.1,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Spacer(),
-                      ],
-                    ),
-                    const CustomDatePicker(),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+   List<Appointment> filteredAppointments;
+
+    return BlocProvider(
+      create: (context) => _appointmentBloc,
+      child: Scaffold(
+        appBar: AppBar(
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: const Color(0xffFAFAFA),
+        title: Text(
+          "All Appointments",
+          style: const TextStyle(
+              color: Color(0xff222B45),
+              fontFamily: "Poppins-SemiBold",
+              fontSize: 16),
+        ),
+      ),
+        body: Padding(
+          padding: const EdgeInsets.only(left: 30, top: 30, right: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+            
+              Stack(
                 children: [
-                  const Text(
-                    "Taken Slots",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 45, 42, 42),
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.start,
-                  ),
-                  ChipGrid(timeSlots: timeSlots),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text(
-                    "Select the Start Time",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 45, 42, 42),
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.start,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
                   Container(
-                    width: 200, // Specify the width
-                    height: 50, // Specify the height
+                    width: double.infinity,
+                    height: 40,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      borderRadius: BorderRadius.circular(
-                          0), // No border radius for sharp corners
+                      color: Color(MyColors.bg),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: InkWell(
-                      onTap: () => pickStartTime(context),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.timer,
-                            color: Colors.white,
-                          ),
-                          SizedBox(
-                              width:
-                                  10), // Add some space between the icon and text
-                          Text(
-                            selectedStartTime != null
-                                ? selectedStartTime!.format(context)
-                                : 'Select start time',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        for (FilterStatus filterStatus in FilterStatus.values)
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (filterStatus == FilterStatus.Confirmed) {
+                                    status = FilterStatus.Confirmed;
+                                    _alignment = Alignment.centerLeft;
+                                  } else if (filterStatus == FilterStatus.Completed) {
+                                    status = FilterStatus.Completed;
+                                    _alignment = Alignment.center;
+                                  } else if (filterStatus == FilterStatus.Cancelled) {
+                                    status = FilterStatus.Cancelled;
+                                    _alignment = Alignment.centerRight;
+                                  }
+                                });
+                              },
+                              child: Center(
+                                child: Text(
+                                  filterStatus.name,
+                                ),
+                              ),
                             ),
                           ),
-                        ],
-                      ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    selectedEndTime != null
-                        ? 'End Time: ${selectedEndTime!.format(context)}'
-                        : 'End Time: -',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 20),
-                  DropdownButtonFormField2<String>(
-                    isExpanded: true,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
+                  AnimatedAlign(
+                    duration: Duration(milliseconds: 200),
+                    alignment: _alignment,
+                    child: Container(
+                      width: 100,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Color(MyColors.primary),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ),
-                    hint: const Text(
-                      'Select Duration',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    value: selectedDuration,
-                    items: durations
-                        .map((item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDuration = value!;
-                        _calculateEndTime();
-                      });
-                    },
-                    buttonStyleData: const ButtonStyleData(
-                      padding: EdgeInsets.only(right: 8),
-                    ),
-                    iconStyleData: const IconStyleData(
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.black45,
-                      ),
-                      iconSize: 24,
-                    ),
-                    dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.white,
+                      child: Center(
+                        child: Text(
+                          status.name,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        elevation: 4),
-                    menuItemStyleData: const MenuItemStyleData(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  DropdownButtonFormField2<String>(
-                    isExpanded: true,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    hint: const Text(
-                      'Select Call Type',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    value: selectedCallType,
-                    items: callTypes
-                        .map((item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedCallType = value!;
-                      });
-                    },
-                    buttonStyleData: const ButtonStyleData(
-                      padding: EdgeInsets.only(right: 8),
-                    ),
-                    iconStyleData: const IconStyleData(
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.black45,
-                      ),
-                      iconSize: 24,
-                    ),
-                    dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.white,
-                        ),
-                        elevation: 4),
-                    menuItemStyleData: const MenuItemStyleData(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                    ),
                   ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Topic of Consultation',
-                      hintText: 'Enter topic of consultation',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    maxLength: 50, // Ensure the topic is short
-                    onChanged: (value) {
-                      setState(() {
-                        consultationTopic = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'What the consultation is about (optional)',
-                      hintText: 'Enter details about the consultation',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    maxLines: 3, // Maximum of 3 lines
-                    maxLength: 150, // Ensure it's not too long
-                    onChanged: (value) {
-                      setState(() {
-                        consultationDetails = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  CheckboxListTile(
-                    title: const Text('Stay anonymous'),
-                    subtitle: const Text(
-                        'Your personal user information won\'t be shared with the lawyer.'),
-                    value: isAnonymous,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        isAnonymous = value!;
-                      });
-                    },
-                    controlAffinity: ListTileControlAffinity.leading,
-                  ),
-                  const SizedBox(height: 20),
                 ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 25, vertical: 15),
-                ),
-                onPressed: () {
-                  // Handle appointment request submission
-                },
-                child: const Text(
-                  "Send Appointment Request",
-                  style: TextStyle(color: Colors.white, fontSize: 15),
+              SizedBox(
+                height: 20,
+              ),
+              Expanded(
+                child: BlocBuilder<AppointmentBloc, AppointmentsState>(
+                  builder: (context, state) {
+                    if (state is AppointmentsLoading) {
+                     return CustomLoading.showWithStyle(context);
+                    } else if (state is AppointmentsLoaded) {
+                      
+                      filteredAppointments =_filterAppointmentsByStatus(state.appointmentResponse.results);
+                      return ListView.builder(
+                        itemCount: filteredAppointments.length,
+                        itemBuilder: (context, index) {
+                          var _appointment = filteredAppointments[index];
+                          bool isLastElement = filteredAppointments.length - 1 == index;
+                          bool showCancelButton = _appointment.status == 'confirmed';
+                          return Card(
+                            margin: !isLastElement ? EdgeInsets.only(bottom: 20) : EdgeInsets.zero,
+                            child: Padding(
+                              padding: EdgeInsets.all(15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Row(
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundImage: NetworkImage(_appointment.lawyerId.avatar),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            _appointment.lawyerId.fullNames,
+                                            style: TextStyle(
+                                              color: Color(MyColors.header01),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          // SizedBox(
+                                          //   height: 5,
+                                          // ),
+                                          // Text(
+                                          //   _appointment.,
+                                          //   style: TextStyle(
+                                          //     color: Color(MyColors.grey02),
+                                          //     fontSize: 14,
+                                          //     fontWeight: FontWeight.w600,
+                                          //   ),
+                                          // ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  DateTimeCard(date: _appointment.date, startTime: _appointment.startTime, endTime: _appointment.endTime),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  Text(
+                                    _appointment.topic,
+                                    style: TextStyle(
+                                      color: Color(MyColors.grey02),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      if (showCancelButton)
+                                      Expanded(
+                                        child: OutlinedButton(
+                                          onPressed: () {},
+                                          child: Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                              color:Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor: WidgetStateProperty.all(Theme.of(context).colorScheme.primary),
+                                          ),
+                                          onPressed: () {},
+                                          child: Text('Reschedule', style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Colors.white),),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } else if (state is AppointmentsError) {
+                      return Center(child: Text(state.error));
+                    } else {
+                      return Container();
+                    }
+                  },
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
+
+  List<Appointment> _filterAppointmentsByStatus(List<Appointment> appointments) {
+    switch (status) {
+      case FilterStatus.Confirmed:
+        return appointments.where((appointment) => appointment.status == 'confirmed').toList();
+      case FilterStatus.Completed:
+        return appointments.where((appointment) => appointment.status == 'completed').toList();
+      case FilterStatus.Cancelled:
+        return appointments.where((appointment) => appointment.status == 'cancelled').toList();
+      default:
+        return [];
+    }
+  }
 }
 
-class ChipGrid extends StatelessWidget {
-  final List<Map<String, dynamic>> timeSlots;
 
-  const ChipGrid({Key? key, required this.timeSlots}) : super(key: key);
+class DateTimeCard extends StatelessWidget {
+  final DateTime date;
+  final DateTime startTime;
+  final DateTime endTime;
+
+  const DateTimeCard({
+    Key? key,
+    required this.date,
+    required this.startTime,
+    required this.endTime,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 3,
-        crossAxisSpacing: 3,
-        childAspectRatio: 3, // Adjust this ratio as needed
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(MyColors.bg03),
+        borderRadius: BorderRadius.circular(10),
       ),
-      itemCount: timeSlots.length,
-      itemBuilder: (context, index) {
-        final slot = timeSlots[index];
-        final isSelected = slot['selected'] ?? false;
-
-        return Chip(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-            side: BorderSide.none,
+      width: double.infinity,
+      padding: EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.calendar_today,
+                color: Color(MyColors.primary),
+                size: 15,
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Text(
+                _formattedDate(),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(MyColors.primary),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-          label: Text(
-            "${slot['start']} - ${slot['end']}",
-            style: TextStyle(color: Colors.white),
+          Row(
+            children: [
+              Icon(
+                Icons.access_alarm,
+                color: Color(MyColors.primary),
+                size: 17,
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Text(
+                _formattedTime(),
+                style: TextStyle(
+                  color: Color(MyColors.primary),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-          backgroundColor: Color(MyColors.primary),
-        );
-      },
+        ],
+      ),
     );
   }
+
+  String _formattedDate() {
+    String dayOfWeek = DateFormat.EEEE().format(date); // Monday
+    String dayOfMonth = DateFormat.d().format(date); // 12
+    String month = DateFormat.MMMM().format(date); // July
+
+    // Add suffix to day of month
+    String suffix = _getDaySuffix(int.parse(dayOfMonth));
+
+    return '$dayOfWeek, $dayOfMonth$suffix $month';
+  }
+
+  String _getDaySuffix(int day) {
+    if (day >= 11 && day <= 13) {
+      return 'th';
+    }
+    switch (day % 10) {
+      case 1:
+        return 'st';
+      case 2:
+        return 'nd';
+      case 3:
+        return 'rd';
+      default:
+        return 'th';
+    }
+  }
+
+  String _formattedTime() {
+    String startTimeFormatted = DateFormat.jm().format(startTime); // 10:00 AM
+    String endTimeFormatted = DateFormat.jm().format(endTime); // 11:00 PM
+
+    return '$startTimeFormatted - $endTimeFormatted';
+  }
+}
+
+class MyColors {
+  static int header01 = 0xff151a56;
+  static int primary = 0xff575de3;
+  static int purple01 = 0xff918fa5;
+  static int purple02 = 0xff6b6e97;
+  static int yellow01 = 0xffeaa63b;
+  static int yellow02 = 0xfff29b2b;
+  static int bg = 0xfff5f3fe;
+  static int bg01 = 0xff6f75e1;
+  static int bg02 = 0xffc3c5f8;
+  static int bg03 = 0xffe8eafe;
+  static int text01 = 0xffbec2fc;
+  static int grey01 = 0xffe9ebf0;
+  static int grey02 = 0xff9796af;
 }

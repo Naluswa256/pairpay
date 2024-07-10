@@ -69,7 +69,7 @@ class HomeRepository {
         final cachedAppointmentsByUser = await _dbProvider.getAppointmentsByUser();
         final cachedAppointmentsTodayByUser = await _dbProvider.getAppointmentsTodayByUser();
         final cachedPopularLawyers = await _dbProvider.getPopularLawyers();
-         logger.info('cached appointments by user : ${cachedAppointmentsByUser?.results.first.toJson()}');
+    
         // Return combined results from the cache
         return DataSuccess({
           'specializations': cachedSpecializations,

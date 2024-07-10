@@ -84,6 +84,19 @@ class DashboardApiProvider {
       rethrow;
     }
   }
+  Future<Map<String, Object?>?> searchLawyersByName(String name, {int limit = 10, int page = 1}) async {
+    try {
+      final queryParams = {
+        'name': name,
+        'limit': limit.toString(),
+        'page': page.toString(),
+      };
+      return await restClient.get('v1/lawyer/search', queryParams: queryParams);
+    } catch (e) {
+      logger.error('Error searching specializations: $e');
+      rethrow;
+    }
+  }
   Future<Map<String, Object?>?> searchLawyersInSpecializationByName(String name,String specializationId, {int limit = 10, int page = 1}) async {
     try {
       final queryParams = {

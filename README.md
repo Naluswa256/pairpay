@@ -13,10 +13,7 @@ Welcome to Easy-Consult! This comprehensive Flutter application allows clients t
 ## Preview
 
 To get a quick overview of the Easy-Consult app, watch the preview video below:
-
-[![Easy-Consult Preview](https://img.youtube.com/vi/7uXYyreLLo4/0.jpg)](https://www.youtube.com/watch?v=7uXYyreLLo4)
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/7uXYyreLLo4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[Watch this video on YouTube](https://www.youtube.com/watch?v=7uXYyreLLo4)
 
 ## Architecture
 
